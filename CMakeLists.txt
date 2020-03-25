@@ -7,4 +7,35 @@ set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/")
 
-ADD_EXECUTABLE ( pbrt src/pbrt.cpp )
+file ( GLOB PBRT_SOURCE
+  src/utlis/*
+  src/accelerators/*
+  src/cameras/*
+  src/filters/*
+  src/integrators/*
+  src/lights/*
+  src/materials/*
+  src/samplers/*
+  src/shapes/*
+  src/textures/*
+  src/media/*
+  )
+
+file ( GLOB PBRT_SOURCE
+  include/ext/*
+  include/accelerators/*
+  include/cameras/*
+  include/filters/*
+  include/integrators/*
+  include/lights/*
+  include/materials/*
+  include/samplers/*
+  include/shapes/*
+  include/textures/*
+  include/media/*
+  )
+
+
+
+add_executable( pbrt src/pbrt.cpp )
+
