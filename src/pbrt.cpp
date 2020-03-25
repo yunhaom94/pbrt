@@ -2,8 +2,8 @@
 #include <vector>
 
 
-void pbrtInit();
-void pbrtCleanup();
+void pbrtInit() { }
+void pbrtCleanup() { }
 
 int main() {
 

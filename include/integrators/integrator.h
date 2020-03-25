@@ -1,10 +1,11 @@
-#pragma once
+#include "scene.h"
+
 class Integrator
 {
 public:
 	Integrator();
 	~Integrator();
-	virtual void Render() = 0;
+	virtual void Render(const Scene& scene)) = 0;
 
 private:
 
