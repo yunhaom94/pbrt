@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-
+#include <Eigen/Core>
 
 void pbrtInit() { }
 void pbrtCleanup() { }
@@ -8,6 +8,7 @@ void pbrtCleanup() { }
 int main() {
 
     std::vector<std::string> filenames;
+
     //TODO: Process command-line arguments
     pbrtInit();
     //TODO: Process scene description

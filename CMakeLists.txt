@@ -5,7 +5,6 @@ project ( pbrt )
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/")
 
 file ( GLOB PBRT_SOURCE
   src/utlis/*
@@ -21,21 +20,7 @@ file ( GLOB PBRT_SOURCE
   src/media/*
   )
 
-file ( GLOB PBRT_SOURCE
-  include/utlis/*
-  include/accelerators/*
-  include/cameras/*
-  include/filters/*
-  include/integrators/*
-  include/lights/*
-  include/materials/*
-  include/samplers/*
-  include/shapes/*
-  include/textures/*
-  include/media/*
-  )
-
 
 
 add_executable( pbrt src/pbrt.cpp )
-target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${ROOT}/lib/eigen/)
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${ROOT}/lib/eigen-3.3.7/)
