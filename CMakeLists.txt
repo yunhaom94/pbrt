@@ -1,6 +1,6 @@
 cmake_minimum_required ( VERSION 3.1.0 )
-
-project ( PBRT )
+set(ROOT "${CMAKE_CURRENT_LIST_DIR}")
+project ( pbrt )
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
@@ -22,7 +22,7 @@ file ( GLOB PBRT_SOURCE
   )
 
 file ( GLOB PBRT_SOURCE
-  include/ext/*
+  include/utlis/*
   include/accelerators/*
   include/cameras/*
   include/filters/*
@@ -38,4 +38,4 @@ file ( GLOB PBRT_SOURCE
 
 
 add_executable( pbrt src/pbrt.cpp )
-
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${ROOT}/lib/eigen/)
