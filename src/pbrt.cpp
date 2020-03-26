@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <Eigen/Core>
+#include "core/ray.h"
 
 void pbrtInit() { }
 void pbrtCleanup() { }
