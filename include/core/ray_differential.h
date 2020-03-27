@@ -1,6 +1,9 @@
 #pragma once
 #include "core/ray.h"
 
+// RayDifferential is a subclass of Ray that contains additional information about two
+// auxiliary rays.These extra rays represent camera rays offset by one sample in the xand y
+// direction from the main ray on the film plane.
 class RayDifferential : public Ray
 {
 public:
