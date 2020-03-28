@@ -1,18 +1,25 @@
 #include <iostream>
 #include <vector>
 #include <Eigen/Core>
-#include "core/bounding_boxes.h"
+#include "core/transform.h"
 
 void pbrtInit() { }
 void pbrtCleanup() { }
 
 int main() {
 
-    Eigen::Vector3i p1(0, 0, 0);
+    Eigen::Matrix4d d;
+    Eigen::Vector3d v(1, 2, 3);
 
-    std::cout << p1.x() << std::endl;
+    d << 1, 2, 3, 4,
+        5, 6, 7, 8, 
+        9, 10, 11, 12,
+        13, 14, 15, 16;
 
-    Bounds3<int> b(p1, p1);
+    Transform tm;
+    Transpose(tm);
+    Translate(v);
+    RotateX(1.5);
 
     std::vector<std::string> filenames;
 
