@@ -2,7 +2,9 @@
 #include <vector>
 #include <Eigen/Core>
 
+#include "core/transform.h"
 #include "core/shape.h"
+#include "shapes/sphere.h"
 
 void pbrtInit() { }
 void pbrtCleanup() { }
@@ -20,6 +22,11 @@ int main()
         9, 10, 11, 12,
         13, 14, 15, 16;
 
+    Transform t1;
+    
+    Sphere s(&t1, &t1, false, 1,1,1,1);
+
+    //std::cout << Eigen::Vector4d(v, 0);
 
     std::vector<std::string> filenames;
 

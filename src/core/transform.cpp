@@ -101,16 +101,36 @@ Transform LookAt(const Eigen::Vector3d& pos, const Eigen::Vector3d& look, const 
 	return Transform(cameraToWorld.inverse(), cameraToWorld);
 }
 
-inline Ray Transform::operator()(const Ray& r) const
+Eigen::Vector3d Transform::operator()(const Eigen::Vector3d v) const
 {
+	Eigen::Vector3d ret = (Eigen::Vector4d(v.x(), v.y(), v.z(), 0).transpose() * m).head<3>();;
 
-	Eigen::Vector4d o = this->m * Eigen::Vector4d(r.o.x(), r.o.y(), r.o.z(), 0);
-	Eigen::Vector4d d = this->m * Eigen::Vector4d(r.d.x(), r.d.y(), r.d.z(), 0);
+	return ret;
+}
 
-	Eigen::Vector3d o3 = o.head<3>();
-	Eigen::Vector3d d3 = d.head<3>();
+Ray Transform::operator()(const Ray& r) const
+{
+	Eigen::Vector3d o3 = (*this)(r.o);
+	Eigen::Vector3d d3 = (*this)(r.d);
 
 	return Ray(o3, d3, r.tMax, r.time, r.medium);
+}
+
+Bounds3d Transform::operator()(const Bounds3d& b) const
+{
+
+	const Transform& M = *this;
+	Bounds3d ret(M(Eigen::Vector3d(b.pMin.x(), b.pMin.y(), b.pMin.z())));
+	ret = Union(ret, M(Eigen::Vector3d(b.pMax.x(), b.pMin.y(), b.pMin.z())));
+	ret = Union(ret, M(Eigen::Vector3d(b.pMin.x(), b.pMax.y(), b.pMin.z())));
+	ret = Union(ret, M(Eigen::Vector3d(b.pMin.x(), b.pMin.y(), b.pMax.z())));
+	ret = Union(ret, M(Eigen::Vector3d(b.pMin.x(), b.pMax.y(), b.pMax.z())));
+	ret = Union(ret, M(Eigen::Vector3d(b.pMax.x(), b.pMax.y(), b.pMin.z())));
+	ret = Union(ret, M(Eigen::Vector3d(b.pMax.x(), b.pMin.y(), b.pMax.z())));
+	ret = Union(ret, M(Eigen::Vector3d(b.pMax.x(), b.pMax.y(), b.pMax.z())));
+	return ret;
+
+
 }
 
 Transform Transform::operator*(const Transform& t2) const {

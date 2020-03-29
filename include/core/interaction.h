@@ -32,7 +32,7 @@ struct Interaction
 		const Eigen::Vector3d &wo, 
 		double time,
 		const MediumInterface &mediumInterface)
-		: p(p), pError(pError), time(time), wo(wo), n(n),
+		: p(p), pError(pError), wo(wo), time(time), n(n),
 		mediumInterface(mediumInterface) { }
 
 

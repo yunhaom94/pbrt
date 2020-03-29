@@ -27,11 +27,17 @@ public:
 	// get the transform matrices of transpose of given transform
 	friend Transform Transpose(const Transform &t);
 
+	// transform a point
+	Eigen::Vector3d operator()(const Eigen::Vector3d v) const;
+		
 	// transform a ray
 	Ray operator()(const Ray& r) const;
 		
-	// TODO: p95
+	// transform a bound box
 	Bounds3d operator()(const Bounds3d& b) const;
+
+	// transform a surface interaction
+	SurfaceInteraction operator()(const SurfaceInteraction& si) const;
 
 	// composition of transformation
 	Transform operator*(const Transform& t2) const;
@@ -43,7 +49,7 @@ public:
 	// if determiant is < 0, then the handeness is changed...somehow?
 	bool SwapsHandedness() const;
 
-	SurfaceInteraction operator()(const SurfaceInteraction& si) const;
+	
 
 
 

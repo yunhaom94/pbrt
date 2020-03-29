@@ -24,5 +24,5 @@ file ( GLOB PBRT_SOURCE
 
 
 
-add_executable( pbrt src/pbrt.cpp  ${PBRT_SOURCE})
+add_executable( pbrt src/pbrt.cpp  ${PBRT_SOURCE} )
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${ROOT}/lib/eigen-3.3.7/)
