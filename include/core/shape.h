@@ -11,8 +11,6 @@
 // this is the base shape interface
 // very similiar to HW3 and HW4 in the idea
 // of using polymorphism
-
-
 class Shape
 {
 
@@ -36,6 +34,24 @@ public:
 
 	// bounding box, but in world space
 	Bounds3d WorldBound() const;
+
+	// do ray-object intersection
+	// in: ray
+	// out: tHit
+	//		isect - surface interaction point info
+	//		testAlphaTexture - Some shape implementations support 
+	//			cutting away some of their surfaces using a texture
+	virtual bool Intersect(const Ray& ray, double& tHit,
+		SurfaceInteraction* isect, bool testAlphaTexture = true) const = 0;
+
+	// simple check for intersection, no additional infp
+	virtual bool IntersectP(const Ray& ray,
+		bool testAlphaTexture = true) const;
+
+	// surface area
+	virtual double Area() const = 0;
+
+
 
 	~Shape() {}
 

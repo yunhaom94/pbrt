@@ -9,3 +9,10 @@ Shape::Shape(const Transform* ObjectToWorld, const Transform* WorldToObject, boo
 Bounds3d Shape::WorldBound() const {
 	return (*ObjectToWorld)(ObjectBound());
 }
+
+bool Shape::IntersectP(const Ray& ray, bool testAlphaTexture) const
+{
+	double tHit = ray.tMax;
+	SurfaceInteraction isect;
+	return Intersect(ray, &tHit, &isect, testAlphaTexture);
+}
