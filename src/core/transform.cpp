@@ -113,3 +113,10 @@ inline Ray Transform::operator()(const Ray& r) const
 Transform Transform::operator*(const Transform& t2) const {
 	return Transform(m * t2.m, mInv * t2.mInv);
 }
+
+SurfaceInteraction Transform::operator()(const SurfaceInteraction& si) const
+{
+	SurfaceInteraction ret;
+	// TODO: p120
+	return ret;
+}

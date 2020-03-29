@@ -1,17 +1,19 @@
+#pragma once
+
 class Shape
 {
+
 public:
-	Shape();
-	~Shape();
+	bool reverseOrientation;
+	bool transformSwapsHandedness;
+	bool orientationIsAuthoritative;
+	
+
+public:
+	Shape() {}
+	~Shape() {}
 
 private:
 
 };
 
-Shape::Shape()
-{
-}
-
-Shape::~Shape()
-{
-}

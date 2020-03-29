@@ -6,6 +6,7 @@
 
 #include "core/ray.h"
 #include "core/bounding_boxes.h"
+#include "core/interaction.h"
 
 // this is a class of transformation matrices
 // they are all 4x4 because we are in 3D world and extra dimension helps
@@ -39,6 +40,9 @@ public:
 	
 	// TODO: p96
 	bool SwapsHandedness() const;
+
+	SurfaceInteraction operator()(const SurfaceInteraction& si) const;
+
 
 
 	~Transform() {}

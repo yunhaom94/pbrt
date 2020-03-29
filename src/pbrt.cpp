@@ -1,12 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <Eigen/Core>
-#include "core/transform.h"
+
+#include "core/interaction.h"
 
 void pbrtInit() { }
 void pbrtCleanup() { }
 
-int main() {
+int main() 
+{
 
     Eigen::Matrix4d d;
     Eigen::Vector3d v(1, 2, 3);
@@ -16,10 +18,6 @@ int main() {
         9, 10, 11, 12,
         13, 14, 15, 16;
 
-    Transform tm;
-    Transpose(tm);
-    Translate(v);
-    RotateX(1.5);
 
     std::vector<std::string> filenames;
 
