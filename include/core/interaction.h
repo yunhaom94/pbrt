@@ -4,7 +4,7 @@
 #include <Eigen/Geometry>
 
 #include "core/medium_interface.h"
-#include "shapes/shape.h"
+#include "core/shape.h"
 
 
 struct Interaction

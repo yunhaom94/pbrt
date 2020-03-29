@@ -4,9 +4,10 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-#include "core/ray.h"
+#include "core/pbrt.h"
 #include "core/bounding_boxes.h"
-#include "core/interaction.h"
+
+
 
 // this is a class of transformation matrices
 // they are all 4x4 because we are in 3D world and extra dimension helps
@@ -38,7 +39,8 @@ public:
 	// TODO: p88
 	bool HasScale() const;
 	
-	// TODO: p96
+	// determine the handedness of the transformation
+	// if determiant is < 0, then the handeness is changed...somehow?
 	bool SwapsHandedness() const;
 
 	SurfaceInteraction operator()(const SurfaceInteraction& si) const;

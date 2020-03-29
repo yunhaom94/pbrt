@@ -1,5 +1,8 @@
 
 #include "core/transform.h"
+#include "core/interaction.h"
+#include "core/ray.h"
+#include "core/bounding_boxes.h"
 
 
 
@@ -112,6 +115,17 @@ inline Ray Transform::operator()(const Ray& r) const
 
 Transform Transform::operator*(const Transform& t2) const {
 	return Transform(m * t2.m, mInv * t2.mInv);
+}
+
+bool Transform::SwapsHandedness() const
+{
+	Eigen::Matrix3d mtemp;
+
+	mtemp.row(0) = m.row(0).head<3>();
+	mtemp.row(1) = m.row(1).head<3>();
+	mtemp.row(2) = m.row(2).head<3>();
+
+	return mtemp.determinant() < 0;
 }
 
 SurfaceInteraction Transform::operator()(const SurfaceInteraction& si) const

@@ -2,7 +2,7 @@
 #include <vector>
 #include <Eigen/Core>
 
-#include "core/interaction.h"
+#include "core/shape.h"
 
 void pbrtInit() { }
 void pbrtCleanup() { }
@@ -12,6 +12,8 @@ int main()
 
     Eigen::Matrix4d d;
     Eigen::Vector3d v(1, 2, 3);
+
+    //Transform s;
 
     d << 1, 2, 3, 4,
         5, 6, 7, 8, 
