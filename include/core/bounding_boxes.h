@@ -2,8 +2,9 @@
 
 #include <limits>
 #include <algorithm>
-
 #include <Eigen/Core>
+
+#include "core/ray.h"
 
 
 template <typename T> class Bounds2
@@ -163,6 +164,93 @@ public:
 		T y = (1 - t.y()) * pMin.y() + t.y() * pMax.y();
 		T z = (1 - t.z()) * pMin.z() + t.z() * pMax.z();
 		return Eigen::Matrix<T, 3, 1>(x, y, z);
+	}
+
+	// From hw4 ray_intersect_box
+	template <typename T>
+	bool IntersectP(const Ray& ray, double& hitt0,
+		double& hitt1) const
+	{
+		Eigen::Vector3d o = ray.o;
+		Eigen::Vector3d d = ray.d;
+
+		T xmin = pMin[0];
+		T ymin = pMin[1];
+		T zmin = pMin[2];
+		T xmax = pMax[0];
+		T ymax = pMax[1];
+		T zmax = pMax[2];
+
+		// inside box
+		if (o[0] >= xmin &&
+			o[1] >= ymin &&
+			o[2] >= zmin &&
+			o[0] <= xmax &&
+			o[1] <= ymax &&
+			o[2] <= zmax)
+		{
+			hitt0 = 0;
+			return true;
+		}
+
+		T txmin, txmax, tymin, tymax, tzmin, tzmax;
+
+		double xrec = 1 / d[0];
+		if (xrec >= 0)
+		{
+			txmin = xrec * (xmin - o[0]);
+			txmax = xrec * (xmax - o[0]);
+		}
+		else
+		{
+			txmin = xrec * (xmax - o[0]);
+			txmax = xrec * (xmin - o[0]);
+		}
+
+		double yrec = 1 / d[1];
+		if (yrec >= 0)
+		{
+			tymin = yrec * (ymin - o[1]);
+			tymax = yrec * (ymax - o[1]);
+		}
+		else
+		{
+			tymin = yrec * (ymax - o[1]);
+			tymax = yrec * (ymin - o[1]);
+		}
+
+		double zrec = 1 / d[2];
+		if (zrec >= 0)
+		{
+			tzmin = zrec * (zmin - o[2]);
+			tzmax = zrec * (zmax - o[2]);
+		}
+		else
+		{
+			tzmin = zrec * (zmax - o[2]);
+			tzmax = zrec * (zmin - o[2]);
+		}
+
+		double tmin = std::max(std::max(txmin, tymin), tzmin);
+		double tmax = std::min(std::min(txmax, tymax), tzmax);
+
+		if (tmin > tmax || tmin > ray.tMax)
+			return false;
+		else
+		{
+			hitt0 = tmin;
+			hitt1 = tmax;
+			return true;
+		}
+	}
+
+	// same as last one but with recs already calculated
+	template <typename T>
+	bool IntersectP(const Ray& ray, const Eigen::Vector3d& invDir,
+		const int dirIsNeg[3]) const
+	{
+		//TODO: p128
+		return false;
 	}
 
 	//TODO: ...
