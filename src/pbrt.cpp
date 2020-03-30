@@ -5,6 +5,7 @@
 #include "core/transform.h"
 #include "core/shape.h"
 #include "shapes/sphere.h"
+#include "core/ray.h"
 
 void pbrtInit() { }
 void pbrtCleanup() { }
@@ -23,6 +24,8 @@ int main()
         13, 14, 15, 16;
 
     Transform t1;
+
+    Ray r;
     
     Sphere s(&t1, &t1, false, 1,1,1,1);
 

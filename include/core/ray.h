@@ -22,7 +22,7 @@ public:
 		double time = 0, const Medium* medium = nullptr)
 		: o(o), d(d), tMax(tMax), time(time), medium(medium) {}
 
-	~Ray();
+	~Ray() {}
 
 	// overload () operator
 	Eigen::Vector3d operator()(double t) const;

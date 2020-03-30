@@ -23,8 +23,11 @@ public:
 	// return an bounding box around the shpere
 	Bounds3d ObjectBound() const;
 
+	// hw2
 	bool Intersect(const Ray& r, double& tHit,
 		SurfaceInteraction* isect, bool testAlphaTexture) const;
+
+	// bool Sphere::IntersectP(const Ray &r, bool testAlphaTexture) const
 
 	double Area() const;
 
