@@ -2,12 +2,11 @@
 
 #include "core/shape.h"
 
-// TODO:
-class Disk : public Shape
+class Triangle : public Shape
 {
 public:
-	Disk() {}
-	~Disk() {}
+	Triangle() {};
+	~Triangle() {};
 
 private:
 
