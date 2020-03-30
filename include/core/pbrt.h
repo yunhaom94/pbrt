@@ -3,7 +3,15 @@
 #define _USE_MATH_DEFINES
 
 // includes
+// std libs
 #include <math.h>
+#include <iostream>
+#include <vector>
+#include <memory>
+
+// Eigen
+#include <Eigen/Core>
+#include <Eigen/Dense>
 
 
 //  Forward Declarations and definations
@@ -13,6 +21,7 @@ class Ray;
 template <typename T> class Bounds2;
 template <typename T> class Bounds3;
 class Transform;
+template <typename T> class Texture;
 
 
 // helper functions

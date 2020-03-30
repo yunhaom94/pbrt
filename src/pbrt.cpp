@@ -2,10 +2,8 @@
 #include <vector>
 #include <Eigen/Core>
 
-#include "core/transform.h"
-#include "core/shape.h"
-#include "shapes/sphere.h"
-#include "core/ray.h"
+#include "core/triangle_mesh.h"
+
 
 void pbrtInit() { }
 void pbrtCleanup() { }
@@ -23,11 +21,6 @@ int main()
         9, 10, 11, 12,
         13, 14, 15, 16;
 
-    Transform t1;
-
-    Ray r;
-    
-    Sphere s(&t1, &t1, false, 1,1,1,1);
 
     //std::cout << Eigen::Vector4d(v, 0);
 
