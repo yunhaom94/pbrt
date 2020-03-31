@@ -12,6 +12,7 @@
 // Eigen
 #include <Eigen/Core>
 #include <Eigen/Dense>
+#include <Eigen/Geometry>
 
 
 //  Forward Declarations and definations
@@ -22,6 +23,8 @@ template <typename T> class Bounds2;
 template <typename T> class Bounds3;
 class Transform;
 template <typename T> class Texture;
+class TriangleMesh;
+class Shape;
 
 
 // helper functions

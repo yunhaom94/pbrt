@@ -2,7 +2,7 @@
 #include <vector>
 #include <Eigen/Core>
 
-#include "core/triangle_mesh.h"
+#include "shapes/triangle.h"
 
 
 void pbrtInit() { }
