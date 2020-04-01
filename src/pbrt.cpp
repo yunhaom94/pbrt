@@ -2,7 +2,7 @@
 #include <vector>
 #include <Eigen/Core>
 
-#include "shapes/triangle.h"
+#include "core/coefficient_spectrum.h"
 
 
 void pbrtInit() { }

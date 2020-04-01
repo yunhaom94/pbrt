@@ -25,6 +25,8 @@ class Transform;
 template <typename T> class Texture;
 class TriangleMesh;
 class Shape;
+template <int nSpectrumSamples> class CoefficientSpectrum;
+class RGBSpectrum;
 
 
 // helper functions
@@ -40,3 +42,8 @@ typedef Bounds2<double> Bounds2d;
 typedef Bounds2<int> Bounds2i;
 typedef Bounds3<double> Bounds3d;
 typedef Bounds3<int> Bounds3i;
+
+// if change type of spectrum, need recompile
+// may change later
+typedef RGBSpectrum Spectrum;
+// typedef SampledSpectrum Spectrum;
