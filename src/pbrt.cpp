@@ -2,7 +2,8 @@
 #include <vector>
 #include <Eigen/Core>
 
-#include "core/coefficient_spectrum.h"
+#include "core/pbrt.h"
+#include "core/spectrum.h"
 
 
 void pbrtInit() { }
@@ -25,6 +26,8 @@ int main()
     //std::cout << Eigen::Vector4d(v, 0);
 
     std::vector<std::string> filenames;
+
+    Spectrum s = Spectrum(1);
 
     //TODO: Process command-line arguments
     pbrtInit();
