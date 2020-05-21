@@ -93,7 +93,7 @@ static double AverageSpectrumSamples(const double* lambda, const double* vals, i
 
 
 
-double InterpolateSpectrumSamples(const double* lambda, const double* vals,
+static double InterpolateSpectrumSamples(const double* lambda, const double* vals,
 	int n, double l) {
 	if (l <= lambda[0]) return vals[0];
 	if (l >= lambda[n - 1]) return vals[n - 1];

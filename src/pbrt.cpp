@@ -4,6 +4,7 @@
 
 #include "core/pbrt.h"
 #include "core/spectrum.h"
+#include "core/geometry.h"
 
 
 void pbrtInit() { }

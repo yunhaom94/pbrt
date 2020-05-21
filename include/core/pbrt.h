@@ -15,12 +15,20 @@
 #include <Eigen/Geometry>
 
 
+// properties
+#define PBRT_CONSTEXPR constexpr
+
+
 //  Forward Declarations
 class SurfaceInteraction;
 class Ray;
 template <typename T> class Bounds2;
 template <typename T> class Bounds3;
 class Transform;
+class AnimatedTransform;
+class Film;
+class Medium;
+class RayDifferential;
 template <typename T> class Texture;
 class TriangleMesh;
 class Shape;
@@ -47,3 +55,7 @@ typedef Bounds3<int> Bounds3i;
 // may change later
 typedef RGBSpectrum Spectrum;
 //typedef SampledSpectrum Spectrum;
+
+
+// values
+static PBRT_CONSTEXPR double Pi = 3.14159265358979323846;
