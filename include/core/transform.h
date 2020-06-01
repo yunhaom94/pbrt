@@ -62,6 +62,18 @@ private:
 
 };
 
+
+class AnimatedTransform
+{
+public:
+	AnimatedTransform() {}
+	~AnimatedTransform() {}
+
+private:
+
+};
+
+
 // give the translation matrices of given changes as delta vector
 Transform Translate(const Eigen::Vector3d &delta);
 

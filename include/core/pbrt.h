@@ -35,7 +35,8 @@ class Shape;
 template <int nSpectrumSamples> class CoefficientSpectrum;
 class SampledSpectrum;
 class RGBSpectrum;
-
+class Light;
+class Primitive;
 
 // helper functions
 template <typename T, typename U, typename V>

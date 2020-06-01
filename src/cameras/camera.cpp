@@ -1,6 +1,9 @@
 #include "cameras/camera.h"
 
-Camera::Camera()
+/*
+
+Camera::Camera(const AnimatedTransform& CameraToWorld, double shutterOpen,
+	double shutterClose, Film* film, const Medium* medium)
 {
 }
 
@@ -33,3 +36,5 @@ double Camera::GenerateRayDifferential(const CameraSample& sample, RayDifferenti
 Camera::~Camera()
 {
 }
+
+*/

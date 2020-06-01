@@ -5,6 +5,7 @@
 #include "core/ray_differential.h"
 
 // holds all of the sample values needed to specify a camera ray.
+/*
 struct CameraSample
 {
 	Eigen::Vector2d pFilm;
@@ -40,3 +41,4 @@ private:
 
 };
 
+*/

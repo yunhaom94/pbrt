@@ -1,7 +1,8 @@
-#include "integrator.h"
+#pragma once
 
-#ifndef SamplerIntegrator
-#define SamplerIntegrator
+#include "core/pbrt.h"
+#include "core/integrator.h"
+
 
 class SamplerIntegrator : public Integrator
 {

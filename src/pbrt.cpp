@@ -30,11 +30,15 @@ int main()
 
     Spectrum s = Spectrum(1);
 
-    //TODO: Process command-line arguments
-    pbrtInit();
-    //TODO: Process scene description
 
     pbrtCleanup();
     std::cout << "Hello World!";
+    return 0;
+}
+
+// TODO:
+int main_real(int argc, char** argv)
+{
+
     return 0;
 }

@@ -3,6 +3,7 @@
 #include "cameras/camera.h"
 #include "core/transform.h"
 
+/*
 class ProjectiveCamera : public Camera
 {
 
@@ -15,8 +16,9 @@ public:
 		double shutterOpen, double shutterClose, double lensr, double focald,
 		Film* film, const Medium* medium)
 		: Camera(CameraToWorld, shutterOpen, shutterClose, film, medium),
-		CameraToScreen(CameraToScreen);
+		CameraToScreen(CameraToScreen) {}
 	
 protected:
 
 };
+*/
