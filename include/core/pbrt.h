@@ -20,23 +20,39 @@
 
 
 //  Forward Declarations
-class SurfaceInteraction;
-class Ray;
+
 template <typename T> class Bounds2;
 template <typename T> class Bounds3;
+
+template <int nSpectrumSamples> class CoefficientSpectrum;
+class RGBSpectrum;
+class SampledSpectrum;
+
+class Film;
+
+class Light;
+
+class Options;
+
+class Primitive;
+
+class Ray;
+
 class Transform;
 class AnimatedTransform;
-class Film;
+
 class Medium;
+
 class RayDifferential;
+
 template <typename T> class Texture;
-class TriangleMesh;
+
 class Shape;
-template <int nSpectrumSamples> class CoefficientSpectrum;
-class SampledSpectrum;
-class RGBSpectrum;
-class Light;
-class Primitive;
+class TriangleMesh;
+
+class SurfaceInteraction;
+
+class Scene;
 
 // helper functions
 template <typename T, typename U, typename V>
