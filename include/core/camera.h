@@ -1,15 +1,15 @@
 #pragma once
 
 #include "core/pbrt.h"
-#include "core/ray.h"
-#include "core/ray_differential.h"
 
-// holds all of the sample values needed to specify a camera ray.
-/*
+
+// TODO: 356
+//records the position on the film for which the camera should
+//generate the corresponding ray
 struct CameraSample
 {
-	Eigen::Vector2d pFilm;
-	Eigen::Vector2d  pLens;
+	Point2d pFilm;
+	Point2d pLens;
 	double time;
 };
 
@@ -17,12 +17,18 @@ class Camera
 {
 
 public:
-	AnimatedTransform CameraToWorld;
-	const double shutterOpen, shutterClose;
+	//AnimatedTransform CameraToWorld;
+	//const double shutterOpen, shutterClose;
 	Film* film;
-	const Medium* medium;
+	//const Medium* medium;
+
 
 public:
+
+	Camera() {}
+	~Camera() {}
+
+
 	Camera(const AnimatedTransform& CameraToWorld, double shutterOpen,
 		double shutterClose, Film* film, const Medium* medium);
 
@@ -35,10 +41,8 @@ public:
 	double Camera::GenerateRayDifferential(const CameraSample& sample,
 		RayDifferential* rd) const;
 
-	~Camera();
 
 private:
 
 };
 
-*/

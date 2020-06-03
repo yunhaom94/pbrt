@@ -29,6 +29,7 @@ class RGBSpectrum;
 class SampledSpectrum;
 
 class Film;
+class FilmTile;
 
 class Light;
 
@@ -54,15 +55,15 @@ class SurfaceInteraction;
 
 class Scene;
 
-// helper functions
-template <typename T, typename U, typename V>
-inline T Clamp(T val, U low, V high) {
-	if (val < low) return low;
-	else if (val > high) return high;
-	else return val;
-}
+class Sampler;
+
+class Camera;
+
+class MemoryArena;
 
 // definitions
+typedef double Float;
+
 typedef Bounds2<double> Bounds2d;
 typedef Bounds2<int> Bounds2i;
 typedef Bounds3<double> Bounds3d;
@@ -73,6 +74,11 @@ typedef Bounds3<int> Bounds3i;
 typedef RGBSpectrum Spectrum;
 //typedef SampledSpectrum Spectrum;
 
+// define eigen vectors to match pbrt vectors
+typedef Eigen::Vector2i Vector2i;
+typedef Eigen::Vector2i Point2i;
+typedef Eigen::Vector2d Vector2d;
+typedef Eigen::Vector2d Point2d;
 
 // values
 static PBRT_CONSTEXPR double Pi = 3.14159265358979323846;

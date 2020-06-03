@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cameras/camera.h"
+#include "core/camera.h"
 #include "core/transform.h"
 
 /*

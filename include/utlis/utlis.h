@@ -2,11 +2,12 @@
 #include "core/pbrt.h"
 
 // linearly interpolate
-double Lerp(double v0, double v1, double t) {
+inline double Lerp(double v0, double v1, double t) {
     return (1 - t) * v0 + t * v1;
 }
 
-template <typename Predicate> int FindInterval(int size,
+template <typename Predicate> 
+inline int FindInterval(int size,
     const Predicate& pred) {
     int first = 0, len = size;
     while (len > 0) {
@@ -19,4 +20,11 @@ template <typename Predicate> int FindInterval(int size,
             len = half;
     }
     return Clamp(first - 1, 0, size - 2);
+}
+
+template <typename T, typename U, typename V>
+inline T Clamp(T val, U low, V high) {
+    if (val < low) return low;
+    else if (val > high) return high;
+    else return val;
 }

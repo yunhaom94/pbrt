@@ -1,12 +1,10 @@
 #pragma once
 
-#include <limits>
-#include <algorithm>
-#include <Eigen/Core>
 
+#include "core/pbrt.h"
 #include "core/ray.h"
 
-
+// TODO:
 template <typename T> class Bounds2
 {
 public:
@@ -14,8 +12,15 @@ public:
 	Eigen::Matrix< T, 2, 1> pMin, pMax;
 
 public:
-	Bounds2();
-	~Bounds2();
+	Bounds2() {}
+	Bounds2(const Eigen::Matrix< T, 2, 1>& p1, const Eigen::Matrix< T, 2, 1>& p2) : pMin(p1), pMax(p2) { }
+	~Bounds2() {}
+
+
+	Vector2i Diagonal()
+	{
+		return Vector2i(0, 0);
+	}
 
 private:
 
@@ -188,7 +193,8 @@ public:
 		return false;
 	}
 
-	//TODO: ...
+	//TODO: 
+
 
 private:
 
