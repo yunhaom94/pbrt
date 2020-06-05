@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <limits>
 
 // Eigen
 #include <Eigen/Core>
@@ -17,6 +18,7 @@
 
 // properties
 #define PBRT_CONSTEXPR constexpr
+#define inf std::numeric_limits<double>::infinity()
 
 
 //  Forward Declarations
@@ -89,6 +91,8 @@ typedef Eigen::Vector2d Point2f;
 
 typedef Eigen::Vector3d Normal3f;
 typedef Eigen::Vector3d Vector3f;
+typedef Eigen::Vector3i Point3i;
+typedef Eigen::Vector3d Point3f;
 
 
 // values

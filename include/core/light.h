@@ -2,7 +2,7 @@
 
 #include "core/pbrt.h"
 #include "core/spectrum.h"
-#include "core/ray_differential.h"
+#include "core/ray.h"
 
 // TODO: p741, move implementation and extra includes to .cpp
 class Light

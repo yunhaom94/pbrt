@@ -1,33 +1,61 @@
 #pragma once
-#include <Eigen/Core>
-#include <limits>
 
-#include "core/medium.h"
-
-#define inf std::numeric_limits<double>::infinity()
+#include "core/pbrt.h"
 
 class Ray
 {
 public:
-	// r(t) = o + td
-	Eigen::Vector3d o;
-	Eigen::Vector3d d;
-	mutable double tMax;
-	double time;
+	// parametric ray r(t) = o + td
+	// default to (0,0,0)
+	Point3f o = Point3f(0, 0, 0);
+	Vector3f d = Vector3f(0, 0, 0);
+	// mutable means is able to change 
+	// even if it marked as const
+	mutable Float tMax;
+	// for animation
+	Float time;
 	const Medium *medium;
 
 public:
 	Ray() : tMax(inf), time(0), medium(nullptr) {}
-	Ray(const Eigen::Vector3d& o, const Eigen::Vector3d& d, double tMax = inf,
-		double time = 0, const Medium* medium = nullptr)
+
+	Ray(const Point3f& o, 
+		const Vector3f& d, 
+		Float tMax = inf,
+		Float time = 0, 
+		const Medium* medium = nullptr)
 		: o(o), d(d), tMax(tMax), time(time), medium(medium) {}
 
 	~Ray() {}
 
 	// overload () operator
-	Eigen::Vector3d operator()(double t) const;
-
-private:
+	Eigen::Vector3d operator()(Float t) const;
 
 };
+
+
+// RayDifferential is a subclass of Ray that contains additional information about two
+// auxiliary rays. These extra rays represent camera rays offset by one sample in the x and y
+// direction from the main ray on the film plane.
+// Used to texture anti-aliasing from averaging the area of texture covered by 3 rays.
+class RayDifferential : public Ray
+{
+public:
+	bool hasDifferentials;
+	Point3f rxOrigin, ryOrigin;
+	Vector3f rxDirection, ryDirection;
+
+public:
+	RayDifferential() { hasDifferentials = false; }
+	RayDifferential(const Ray& ray) : Ray(ray) 
+	{
+		hasDifferentials = false;
+	}
+
+	// update differential rays for an estimated sample spacing of s.
+	void ScaleDifferentials(Float s);
+
+};
+
+
 

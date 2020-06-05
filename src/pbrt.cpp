@@ -10,25 +10,12 @@
 int main()
 {
 
-    Eigen::Matrix4d d;
-    Eigen::Vector3d v(1, 2, 3);
-
-    //Transform s;
-
-    d << 1, 2, 3, 4,
-        5, 6, 7, 8,
-        9, 10, 11, 12,
-        13, 14, 15, 16;
+    Eigen::Vector3d v(0,0,0);
 
 
-    //std::cout << Eigen::Vector4d(v, 0);
-
-    std::vector<std::string> filenames;
-
-    Spectrum s = Spectrum(1);
 
 
-    std::cout << "Hello World!";
+    std::cout << v;
     return 0;
 }
 
