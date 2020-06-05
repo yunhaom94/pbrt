@@ -33,6 +33,8 @@ class FilmTile;
 
 class Light;
 
+class VisibilityTester;
+
 class Options;
 
 class Primitive;
@@ -51,6 +53,7 @@ template <typename T> class Texture;
 class Shape;
 class TriangleMesh;
 
+class Interaction;
 class SurfaceInteraction;
 
 class Scene;
@@ -61,7 +64,10 @@ class Camera;
 
 class MemoryArena;
 
+class BSDF;
+
 // definitions
+// TODO: may have flag for float and double
 typedef double Float;
 
 typedef Bounds2<double> Bounds2d;
@@ -75,10 +81,16 @@ typedef RGBSpectrum Spectrum;
 //typedef SampledSpectrum Spectrum;
 
 // define eigen vectors to match pbrt vectors
+// TODO: may have flag for float and double
 typedef Eigen::Vector2i Vector2i;
 typedef Eigen::Vector2i Point2i;
-typedef Eigen::Vector2d Vector2d;
-typedef Eigen::Vector2d Point2d;
+typedef Eigen::Vector2d Vector2f;
+typedef Eigen::Vector2d Point2f;
+
+typedef Eigen::Vector3d Normal3f;
+typedef Eigen::Vector3d Vector3f;
+
 
 // values
 static PBRT_CONSTEXPR double Pi = 3.14159265358979323846;
+

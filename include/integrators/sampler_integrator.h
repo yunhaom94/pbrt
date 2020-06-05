@@ -26,11 +26,21 @@ public:
 	// waiting to be implemented
 	virtual void Preprocess(const Scene& scene, Sampler& sampler) { }
 
-	// actual calculate light stuff along the ray
+	// actually calculate light stuff along the ray,
+	// similar to RayColour() in 418 hw
+	// return the spectrograph of a ray of light
 	virtual Spectrum Li(const RayDifferential& ray, const Scene& scene,
 		Sampler& sampler, MemoryArena& arena, int depth = 0) const = 0;
 
 	void Render(const Scene& scene);
+
+	Spectrum SpecularReflect(
+		const RayDifferential& ray, const SurfaceInteraction& isect,
+		const Scene& scene, Sampler& sampler, MemoryArena& arena, int depth) const;
+
+	Spectrum SpecularTransmit(
+		const RayDifferential& ray, const SurfaceInteraction& isect,
+		const Scene& scene, Sampler& sampler, MemoryArena& arena, int depth) const;
 
 private:
 

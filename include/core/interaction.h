@@ -6,7 +6,25 @@
 #include "core/medium_interface.h"
 #include "core/shape.h"
 
+#include "core/memory.h"
+#include "core/spectrum.h"
+#include "core/bxdf.h"
 
+class BSDF // TODO: remove this
+{
+public:
+	BSDF() {}
+	~BSDF() {}
+
+	virtual Spectrum f(Vector3f wo, Vector3f wi);
+	virtual Spectrum Sample_f(Vector3f wo, Vector3f *wi, Point2f sample, Float *pdf, BxDFType type);
+
+private:
+
+};
+
+
+// TODO: move extra .h
 struct Interaction
 {
 	// point of intersection and slight offset on intersection point
@@ -17,6 +35,8 @@ struct Interaction
 	// normal
 	Eigen::Vector3d n;
 	double time;
+
+	BSDF *bsdf;
 	
 	bool surfaceInteraction = false;
 	
@@ -40,6 +60,8 @@ struct Interaction
 	bool IsSurfaceInteraction() const;
 
 };
+
+
 
 class SurfaceInteraction : public Interaction
 {
@@ -92,6 +114,9 @@ public:
 	// update shading struct
 	void SetShadingGeometry(const Eigen::Vector3d& dpdus, const Eigen::Vector3d& dpdvs,
 		const Eigen::Vector3d& dndus, const Eigen::Vector3d& dndvs, bool orientationIsAuthoritative);
+
+	void ComputeScatteringFunctions(Ray r, MemoryArena m) {}
+	Spectrum Le(Vector3f wo) {};
 
 	~SurfaceInteraction() {}
 

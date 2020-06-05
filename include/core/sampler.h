@@ -10,8 +10,8 @@ public:
 		Float samplesPerPixel;
 
 public:
-	Sampler();
-	~Sampler();
+	Sampler() {}
+	~Sampler() {}
 
 	std::unique_ptr<Sampler> Clone(int seed)
 	{
@@ -25,8 +25,10 @@ public:
 
 	bool StartNextSample()
 	{
-
+		return false;
 	}
+
+	Point2f Get2D() { return Point2f(0, 0); }
 
 	CameraSample GetCameraSample(Point2i pixel)
 	{
@@ -36,11 +38,3 @@ public:
 private:
 
 };
-
-Sampler::Sampler()
-{
-}
-
-Sampler::~Sampler()
-{
-}

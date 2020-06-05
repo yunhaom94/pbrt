@@ -7,6 +7,8 @@
 #include "core/filmtile.h"
 #include "core/ray_differential.h"
 #include "core/spectrum.h"
+#include "core/interaction.h"
+#include "core/bxdf.h"
 
 void SamplerIntegrator::Render(const Scene& scene)
 {
@@ -83,4 +85,62 @@ void SamplerIntegrator::Render(const Scene& scene)
 	// output
 	camera->film->WriteImage();
 
+}
+
+Spectrum SamplerIntegrator::SpecularReflect(const RayDifferential& ray, 
+	const SurfaceInteraction& isect, 
+	const Scene& scene, 
+	Sampler& sampler, 
+	MemoryArena& arena, 
+	int depth) const
+{
+	// == Vector3f wo = insect wo; Vector3f wi; ????
+	Vector3f wo = isect.wo, wi;
+	Float pdf;
+
+	// set type to relection for sampler
+	BxDFType type = BxDFType(BSDF_REFLECTION | BSDF_SPECULAR);
+	// Given wo, compute specular reflection direction wi and BSDF value
+	Spectrum f = isect.bsdf->Sample_f(wo, &wi, sampler.Get2D(), &pdf, type);
+
+	const Normal3f& ns = isect.shading.n;
+	if (pdf > 0 && !f.IsBlack() && std::abs(wi.dot(ns)) != 0) 
+	{
+			//TODO: Compute ray differential rd for specular reflection p607
+		Ray rd;
+		return f * Li(rd, scene, sampler, arena, depth + 1) * std::abs(wi.dot(ns)) * (1 / pdf);
+	}
+	else
+		return Spectrum(0.f);
+
+	return Spectrum();
+}
+
+Spectrum SamplerIntegrator::SpecularTransmit(const RayDifferential& ray,
+	const SurfaceInteraction& isect, 
+	const Scene& scene, 
+	Sampler& sampler,
+	MemoryArena& arena, 
+	int depth) const
+{
+	// == Vector3f wo = insect wo; Vector3f wi; ????
+	Vector3f wo = isect.wo, wi;
+	Float pdf;
+
+	// set type to relection for sampler
+	BxDFType type = BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR);
+	// Given wo, compute specular reflection direction wi and BSDF value
+	Spectrum f = isect.bsdf->Sample_f(wo, &wi, sampler.Get2D(), &pdf, type);
+
+	const Normal3f& ns = isect.shading.n;
+	if (pdf > 0 && !f.IsBlack() && std::abs(wi.dot(ns)) != 0)
+	{
+		//TODO: Compute ray differential rd for specular reflection p607
+		Ray rd;
+		return f * Li(rd, scene, sampler, arena, depth + 1) * std::abs(wi.dot(ns)) * (1 / pdf);
+	}
+	else
+		return Spectrum(0.f);
+
+	return Spectrum();
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "core/pbrt.h"
 
-// This is the class with all the BSDF functions
+// This is the class with all the BSDF algorithms
 // it is able to actually render a image
 class Integrator
 {

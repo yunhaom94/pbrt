@@ -9,7 +9,7 @@ class FilmTile
 public:
 	FilmTile();
 	~FilmTile();
-	void AddSample(Point2d pf, Spectrum s, Float weight) {}
+	void AddSample(Point2f pf, Spectrum s, Float weight) {}
 
 
 

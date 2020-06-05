@@ -8,8 +8,8 @@
 //generate the corresponding ray
 struct CameraSample
 {
-	Point2d pFilm;
-	Point2d pLens;
+	Point2f pFilm;
+	Point2f pLens;
 	double time;
 };
 
