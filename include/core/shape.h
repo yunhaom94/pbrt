@@ -30,10 +30,10 @@ public:
 		bool reverseOrientation);
 
 	// return a bounding box around the object
-	virtual Bounds3d ObjectBound() const = 0;
+	virtual Bounds3f ObjectBound() const = 0;
 
 	// bounding box, but in world space
-	Bounds3d WorldBound() const;
+	Bounds3f WorldBound() const;
 
 	// do ray-object intersection
 	// in: ray

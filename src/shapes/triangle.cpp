@@ -25,12 +25,12 @@ std::vector<std::shared_ptr<Shape>> Triangle::CreateTriangleMesh(const Transform
 	return std::vector<std::shared_ptr<Shape>>();
 }
 
-Bounds3d Triangle::ObjectBound() const
+Bounds3f Triangle::ObjectBound() const
 {
 	const Eigen::Vector3d& p0 = mesh->p[v[0]];
 	const Eigen::Vector3d& p1 = mesh->p[v[1]];
 	const Eigen::Vector3d& p2 = mesh->p[v[2]];
-	return Union(Bounds3d((*WorldToObject)(p0), (*WorldToObject)(p1)),
+	return Union(Bounds3f((*WorldToObject)(p0), (*WorldToObject)(p1)),
 		(*WorldToObject)(p2));
 }
 

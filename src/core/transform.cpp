@@ -116,11 +116,11 @@ Ray Transform::operator()(const Ray& r) const
 	return Ray(o3, d3, r.tMax, r.time, r.medium);
 }
 
-Bounds3d Transform::operator()(const Bounds3d& b) const
+Bounds3f Transform::operator()(const Bounds3f& b) const
 {
 
 	const Transform& M = *this;
-	Bounds3d ret(M(Eigen::Vector3d(b.pMin.x(), b.pMin.y(), b.pMin.z())));
+	Bounds3f ret(M(Eigen::Vector3d(b.pMin.x(), b.pMin.y(), b.pMin.z())));
 	ret = Union(ret, M(Eigen::Vector3d(b.pMax.x(), b.pMin.y(), b.pMin.z())));
 	ret = Union(ret, M(Eigen::Vector3d(b.pMin.x(), b.pMax.y(), b.pMin.z())));
 	ret = Union(ret, M(Eigen::Vector3d(b.pMin.x(), b.pMin.y(), b.pMax.z())));

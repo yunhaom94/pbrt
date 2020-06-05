@@ -19,14 +19,14 @@ private:
 	// kinda like the "top level" of a tree toward all geometries in 
 	// the scene
 	std::shared_ptr<Primitive> aggregate;
-	Bounds3d worldBound;
+	Bounds3f worldBound;
 
 public:
 
 	Scene(std::shared_ptr<Primitive> aggregate, const std::vector<std::shared_ptr<Light>>& lights);
 	~Scene() {}
 
-	const Bounds3d& WorldBound() const { return worldBound; }
+	const Bounds3f& WorldBound() const { return worldBound; }
 
 	// traces the given ray into the scene and returns a Boolean value indicating
 	// if the ray intersected any of the primitives

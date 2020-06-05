@@ -21,7 +21,7 @@ public:
 		double phiMax);
 
 	// return an bounding box around the shpere
-	Bounds3d ObjectBound() const;
+	Bounds3f ObjectBound() const;
 
 	// hw2
 	bool Intersect(const Ray& r, double& tHit,

@@ -34,7 +34,7 @@ public:
 	Ray operator()(const Ray& r) const;
 		
 	// transform a bound box
-	Bounds3d operator()(const Bounds3d& b) const;
+	Bounds3f operator()(const Bounds3f& b) const;
 
 	// transform a surface interaction
 	SurfaceInteraction operator()(const SurfaceInteraction& si) const;

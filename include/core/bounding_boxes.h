@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "core/pbrt.h"
 #include "core/ray.h"
 

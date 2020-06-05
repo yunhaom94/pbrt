@@ -72,9 +72,9 @@ class BSDF;
 // TODO: may have flag for float and double
 typedef double Float;
 
-typedef Bounds2<double> Bounds2d;
+typedef Bounds2<Float> Bounds2f;
 typedef Bounds2<int> Bounds2i;
-typedef Bounds3<double> Bounds3d;
+typedef Bounds3<Float> Bounds3f;
 typedef Bounds3<int> Bounds3i;
 
 // if change type of spectrum, need recompile

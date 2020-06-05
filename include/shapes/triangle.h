@@ -33,7 +33,7 @@ public:
 		const std::shared_ptr<Texture<double>>& alphaMask);
 
 	// create a bounding box around the triangle
-	Bounds3d ObjectBound() const;
+	Bounds3f ObjectBound() const;
 
 	// calcuate intersect between triangle and a ray
 	// used algorithm in hw4

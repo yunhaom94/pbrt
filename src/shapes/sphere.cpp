@@ -18,9 +18,9 @@ Sphere::Sphere(const Transform* ObjectToWorld, const Transform* WorldToObject, b
 }
 
 
-Bounds3d Sphere::ObjectBound() const
+Bounds3f Sphere::ObjectBound() const
 {
-	return Bounds3d(Eigen::Vector3d(-radius, -radius, zMin),
+	return Bounds3f(Eigen::Vector3d(-radius, -radius, zMin),
 		Eigen::Vector3d(radius, radius, zMax));
 }
 
