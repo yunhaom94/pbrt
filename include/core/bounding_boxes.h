@@ -3,6 +3,8 @@
 #include "core/pbrt.h"
 #include "core/ray.h"
 
+// DO NOT FORMAT THIS DOCUMENT IN VS
+
 // TODO:
 template <typename T> class Bounds2
 {
@@ -35,6 +37,8 @@ public:
 public:
 	Bounds3()
 	{
+		// default constructors create an empty box by 
+		// setting the extent to an invalid configuration
 		T minNum = std::numeric_limits<T>::lowest();
 		T maxNum = std::numeric_limits<T>::max();
 		pMin = Eigen::Matrix< T, 3, 1>(maxNum, maxNum, maxNum);
@@ -43,12 +47,14 @@ public:
 
 	Bounds3(const Eigen::Matrix< T, 3, 1>& p) : pMin(p), pMax(p) { }
 
-	Bounds3(const Eigen::Matrix< T, 3, 1>& p1, const Eigen::Matrix< T, 3, 1>& p2)
-		: pMin(std::min(p1.x(), p2.x()), std::min(p1.y(), p2.y()),
-			std::min(p1.z(), p2.z())),
-		pMax(std::max(p1.x(), p2.x()), std::max(p1.y(), p2.y()),
-			std::max(p1.z(), p2.z())) {
-	}
+	Bounds3(const Eigen::Matrix< T, 3, 1>& p1, 
+		const Eigen::Matrix< T, 3, 1>& p2)
+		: pMin(std::min(p1.x(), p2.x()), 
+			   std::min(p1.y(), p2.y()),
+			   std::min(p1.z(), p2.z())),
+		  pMax(std::max(p1.x(), p2.x()), 
+			   std::max(p1.y(), p2.y()),
+			   std::max(p1.z(), p2.z())) { }
 
 	~Bounds3() {}
 
@@ -63,6 +69,7 @@ public:
 		return i == 0 ? pMin : pMax;
 	}
 
+	// returns the coordinates of one of the eight corners of the BB
 	Eigen::Matrix< T, 3, 1> Corner(int corner) const
 	{
 		return Eigen::Matrix< T, 3, 1>((*this)[(corner & 1)].x(),
@@ -72,7 +79,7 @@ public:
 
 	Eigen::Matrix<T, 3, 1> Diagonal() const { return pMax - pMin; }
 
-	// hhat is this for??
+	// k?
 	T SurfaceArea() const
 	{
 		Eigen::Matrix<T, 3, 1> d = Diagonal();
@@ -84,7 +91,7 @@ public:
 		Eigen::Matrix<T, 3, 1> d = Diagonal();
 		return d.x() * d.y() * d.z();
 	}
-
+	// returns the index of which of the three axes is longest
 	int MaximumExtent() const
 	{
 		Eigen::Matrix<T, 3, 1> d = Diagonal();
@@ -96,7 +103,7 @@ public:
 			return 2;
 	}
 
-	// linear interoplation between conrners and given t
+	// linear interpolation between corners and given t
 	Eigen::Matrix<T, 3, 1> Lerp(const Eigen::Matrix<T, 3, 1>& t) const
 	{
 		T x = (1 - t.x()) * pMin.x() + t.x() * pMax.x();
@@ -104,6 +111,30 @@ public:
 		T z = (1 - t.z()) * pMin.z() + t.z() * pMax.z();
 		return Eigen::Matrix<T, 3, 1>(x, y, z);
 	}
+
+	// Offset() returns the continuous position of a point relative to the corners of the box
+	// starting at the min corner as origin.
+	Eigen::Matrix<T, 3, 1> Offset(const Eigen::Matrix<T, 3, 1>& p) const 
+	{
+		Eigen::Matrix<T, 3, 1> o = p - pMin;
+		if (pMax.x() > pMin.x()) 
+			o.x() /= pMax.x() - pMin.x();
+		if (pMax.y() > pMin.y()) 
+			o.y() /= pMax.y() - pMin.y();
+		if (pMax.z() > pMin.z()) 
+			o.z() /= pMax.z() - pMin.z();
+		return o;
+	}
+
+	// write a loosely bounding sphere to provided
+	// center and radius
+	void BoundingSphere(Point3f* center, Float* radius) const 
+	{
+		*center = (pMin + pMax) / 2;
+		*radius = Inside(*center, *this) ? Distance(*center, pMax) : 0;
+	}
+
+	// TODO: iterator for something? p81
 
 	// From hw4 ray_intersect_box
 	template <typename T>
@@ -202,40 +233,44 @@ private:
 
 // utility functions of bounding boxes
 
-template <typename T> Bounds3<T> Union(const Bounds3<T>& b, const Eigen::Matrix< T, 3, 1>& p)
+template <typename T> Bounds3<T> 
+Union(const Bounds3<T>& b, const Eigen::Matrix< T, 3, 1>& p)
 {
 	return Bounds3<T>(Eigen::Matrix< T, 3, 1>(std::min(b.pMin.x(), p.x()),
-		std::min(b.pMin.y(), p.y()),
-		std::min(b.pMin.z(), p.z())),
-		Eigen::Matrix< T, 3, 1>(std::max(b.pMax.x(), p.x()),
-			std::max(b.pMax.y(), p.y()),
-			std::max(b.pMax.z(), p.z())));
+											  std::min(b.pMin.y(), p.y()),
+											  std::min(b.pMin.z(), p.z())),
+					  Eigen::Matrix< T, 3, 1>(std::max(b.pMax.x(), p.x()),
+											  std::max(b.pMax.y(), p.y()),
+											  std::max(b.pMax.z(), p.z())));
 }
 
 
-template <typename T> Bounds3<T> Union(const Bounds3<T>& b1, const Bounds3<T>& b2)
+template <typename T> Bounds3<T> 
+Union(const Bounds3<T>& b1, const Bounds3<T>& b2)
 {
 	return Bounds3<T>(Eigen::Matrix<T, 3, 1>(std::min(b1.pMin.x(), b2.pMin.x()),
-		std::min(b1.pMin.y(), b2.pMin.y()),
-		std::min(b1.pMin.z(), b2.pMin.z())),
-		Eigen::Matrix< T, 3, 1>(std::max(b1.pMax.x(), b2.pMax.x()),
-			std::max(b1.pMax.y(), b2.pMax.y()),
-			std::max(b1.pMax.z(), b2.pMax.z())));
+											 std::min(b1.pMin.y(), b2.pMin.y()),
+											 std::min(b1.pMin.z(), b2.pMin.z())),
+					  Eigen::Matrix<T, 3, 1>(std::max(b1.pMax.x(), b2.pMax.x()),
+											 std::max(b1.pMax.y(), b2.pMax.y()),
+											 std::max(b1.pMax.z(), b2.pMax.z())));
 }
 
 
-template <typename T> Bounds3<T> Intersect(const Bounds3<T>& b1, const Bounds3<T>& b2)
+template <typename T> Bounds3<T>
+Intersect(const Bounds3<T>& b1, const Bounds3<T>& b2)
 {
 	return Bounds3<T>(Eigen::Matrix<T, 3, 1>(std::max(b1.pMin.x(), b2.pMin.x()),
-		std::max(b1.pMin.y() b2.pMin.y()),
-		std::max(b1.pMin.z(), b2.pMin.z())),
-		Eigen::Matrix<T, 3, 1>(std::min(b1.pMax.x(), b2.pMax.x()),
-			std::min(b1.pMax.y(), b2.pMax.y()),
-			std::min(b1.pMax.z(), b2.pMax.z())));
+											 std::max(b1.pMin.y(), b2.pMin.y()),
+											 std::max(b1.pMin.z(), b2.pMin.z())),
+					  Eigen::Matrix<T, 3, 1>(std::min(b1.pMax.x(), b2.pMax.x()),
+											 std::min(b1.pMax.y(), b2.pMax.y()),
+											 std::min(b1.pMax.z(), b2.pMax.z())));
 }
 
 // TODO: maybe can simplify with Eigen
-template <typename T> bool Overlaps(const Bounds3<T>& b1, const Bounds3<T>& b2)
+template <typename T> 
+bool Overlaps(const Bounds3<T>& b1, const Bounds3<T>& b2)
 {
 	bool x = (b1.pMax.x() >= b2.pMin.x()) && (b1.pMin.x() <= b2.pMax.x());
 	bool y = (b1.pMax.y() >= b2.pMin.y()) && (b1.pMin.y() <= b2.pMax.y());
@@ -244,24 +279,27 @@ template <typename T> bool Overlaps(const Bounds3<T>& b1, const Bounds3<T>& b2)
 }
 
 // TODO: maybe can simplify with Eigen
-template <typename T> bool Inside(const Eigen::Matrix<T, 3, 1>& p, const Bounds3<T>& b)
+template <typename T> 
+bool Inside(const Eigen::Matrix<T, 3, 1>& p, const Bounds3<T>& b)
 {
 	return (p.x() >= b.pMin.x() && p.x() <= b.pMax.x() &&
-		p.y() >= b.pMin.y() && p.y() <= b.pMax.y() &&
-		p.z() >= b.pMin.z() && p.z() <= b.pMax.z());
+		    p.y() >= b.pMin.y() && p.y() <= b.pMax.y() &&
+		    p.z() >= b.pMin.z() && p.z() <= b.pMax.z());
 }
 
 
-template <typename T> bool InsideExclusive(const Eigen::Matrix<T, 3, 1>& p, const Bounds3<T>& b)
+template <typename T> 
+bool InsideExclusive(const Eigen::Matrix<T, 3, 1>& p, const Bounds3<T>& b)
 {
 	return (p.x() >= b.pMin.x() && p.x() < b.pMax.x() &&
-		p.y() >= b.pMin.y() && p.y() < b.pMax.y() &&
-		p.z() >= b.pMin.z() && p.z() < b.pMax.z());
+		    p.y() >= b.pMin.y() && p.y() < b.pMax.y() &&
+		    p.z() >= b.pMin.z() && p.z() < b.pMax.z());
 }
 
 
-template <typename T, typename U> inline Bounds3<T>	Expand(const Bounds3<T>& b, U delta)
+template <typename T, typename U> 
+inline Bounds3<T> Expand(const Bounds3<T>& b, U delta)
 {
 	return Bounds3<T>(b.pMin - Eigen::Matrix<T, 3, 1>(delta, delta, delta),
-		b.pMax + Eigen::Matrix<T, 3, 1>(delta, delta, delta));
+		              b.pMax + Eigen::Matrix<T, 3, 1>(delta, delta, delta));
 }
