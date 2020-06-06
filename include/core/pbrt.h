@@ -94,6 +94,7 @@ typedef Eigen::Vector3d Vector3f;
 typedef Eigen::Vector3i Point3i;
 typedef Eigen::Vector3d Point3f;
 
+typedef Eigen::Matrix4d Matrix4x4;
 
 // values
 static PBRT_CONSTEXPR double Pi = 3.14159265358979323846;

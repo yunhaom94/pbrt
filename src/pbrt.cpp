@@ -10,12 +10,18 @@
 int main()
 {
 
-    Eigen::Vector3d v(0,0,0);
+    Matrix4x4 m;
+
+    m << 1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12,
+        0, 0, 0, 1;
+
+    Eigen::Vector4d v;
+    v << 2, 3, 4, 0;
 
 
-
-
-    std::cout << v;
+    std::cout << v.transpose() * m;
     return 0;
 }
 

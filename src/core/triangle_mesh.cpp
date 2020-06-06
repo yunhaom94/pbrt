@@ -19,5 +19,5 @@ TriangleMesh::TriangleMesh(const Transform& ObjectToWorld,
 	// Transform mesh vertices to world space
 	p.reset(new Eigen::Vector3d[nVertices]);
 	for (int i = 0; i < nVertices; ++i)
-		p[i] = ObjectToWorld(P[i]);
+		p[i] = ObjectToWorld.TransformPoint(P[i]);
 }

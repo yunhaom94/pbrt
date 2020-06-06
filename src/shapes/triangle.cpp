@@ -30,17 +30,17 @@ Bounds3f Triangle::ObjectBound() const
 	const Eigen::Vector3d& p0 = mesh->p[v[0]];
 	const Eigen::Vector3d& p1 = mesh->p[v[1]];
 	const Eigen::Vector3d& p2 = mesh->p[v[2]];
-	return Union(Bounds3f((*WorldToObject)(p0), (*WorldToObject)(p1)),
-		(*WorldToObject)(p2));
+	return Union(Bounds3f((*WorldToObject).TransformPoint(p0), (*WorldToObject).TransformPoint(p1)),
+		(*WorldToObject).TransformPoint(p2));
 }
 
 bool Triangle::Intersect(const Ray& ray, double& tHit, SurfaceInteraction* isect, bool testAlphaTexture) const
 {
     double min_t = 0;
 
-    Eigen::Vector3d a = (*ObjectToWorld)(mesh->p[v[0]]);
-    Eigen::Vector3d b = (*ObjectToWorld)(mesh->p[v[1]]);
-    Eigen::Vector3d c = (*ObjectToWorld)(mesh->p[v[2]]);
+    Eigen::Vector3d a = (*ObjectToWorld).TransformPoint(mesh->p[v[0]]);
+    Eigen::Vector3d b = (*ObjectToWorld).TransformPoint(mesh->p[v[1]]);
+    Eigen::Vector3d c = (*ObjectToWorld).TransformPoint(mesh->p[v[2]]);
 
     Eigen::Vector3d e = ray.o;
     Eigen::Vector3d d = ray.d;
