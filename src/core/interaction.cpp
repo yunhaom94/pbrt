@@ -1,5 +1,9 @@
 #include "core/interaction.h"
 #include "core/medium_interface.h"
+#include "core/ray.h"
+#include "core/spectrum.h"
+#include "core/shape.h"
+#include "core/memory.h"
 #include "utlis/utlis.h"
 
 Interaction::Interaction(const Point3f& p, 
@@ -84,4 +88,15 @@ void SurfaceInteraction::SetShadingGeometry(const Vector3f& dpdus,
 	shading.dndu = dndus;
 	shading.dndv = dndvs;
 
+}
+
+void SurfaceInteraction::ComputeScatteringFunctions(Ray r, MemoryArena m)
+{
+	// TODO:
+}
+
+Spectrum SurfaceInteraction::Le(Vector3f wo)
+{
+	// TODO:
+	return Spectrum();
 }

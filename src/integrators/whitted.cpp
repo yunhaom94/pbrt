@@ -5,6 +5,7 @@
 #include "core/ray.h"
 #include "core/visibility_tester.h"
 #include "core/sampler.h"
+#include "core/memory.h"
 
 Spectrum WhittedIntegrator::Li(const RayDifferential& ray,
 	const Scene& scene, Sampler& sampler, MemoryArena& arena,

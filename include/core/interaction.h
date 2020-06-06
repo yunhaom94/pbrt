@@ -1,16 +1,12 @@
 #pragma once
 
 #include "core/pbrt.h"
-
 #include "core/medium_interface.h"
-#include "core/shape.h"
-
-#include "core/memory.h"
-#include "core/spectrum.h"
 #include "core/bxdf.h"
 
 class BSDF // TODO: remove this
 {
+
 public:
 	BSDF() {}
 	~BSDF() {}
@@ -100,9 +96,9 @@ public:
 	void SetShadingGeometry(const Vector3f& dpdus, const Vector3f& dpdvs,
 		const Normal3f& dndus, const Normal3f& dndvs, bool orientationIsAuthoritative);
 
-	void ComputeScatteringFunctions(Ray r, MemoryArena m) {}
+	void ComputeScatteringFunctions(Ray r, MemoryArena m);
 	
-	Spectrum Le(Vector3f wo) {};
+	Spectrum Le(Vector3f wo);
 
 
 

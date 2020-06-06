@@ -68,6 +68,8 @@ class MemoryArena;
 
 class BSDF;
 
+class MediumInterface;
+
 // definitions
 // TODO: may have flag for float and double
 typedef double Float;

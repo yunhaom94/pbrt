@@ -4,7 +4,9 @@
 #include "core/transform.h"
 #include "core/ray.h"
 #include "core/interaction.h"
+#include "core/bounding_boxes.h"
 #include "utlis/utlis.h"
+
 
 Sphere::Sphere(const Transform* ObjectToWorld, const Transform* WorldToObject, bool reverseOrientation, double radius, double zMin, double zMax, double phiMax)
 	: Shape(ObjectToWorld, WorldToObject, reverseOrientation),
