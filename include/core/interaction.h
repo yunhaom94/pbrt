@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Eigen/Core>
-#include <Eigen/Geometry>
+#include "core/pbrt.h"
 
 #include "core/medium_interface.h"
 #include "core/shape.h"
@@ -29,12 +28,13 @@ struct Interaction
 {
 	// point of intersection and slight offset on intersection point
 	// due to precision concern
-	Eigen::Vector3d p, pError;
-	// negative ray
-	Eigen::Vector3d wo;
+	Point3f p;
+	Vector3f pError;
+	// negative direction ray 
+	Vector3f wo;
 	// normal
-	Eigen::Vector3d n;
-	double time;
+	Normal3f n;
+	Float time;
 
 	BSDF *bsdf;
 	
@@ -44,83 +44,67 @@ struct Interaction
 	// by an instance of the MediumInterface class,
 	MediumInterface mediumInterface;
 
-	Interaction() {}
+	Interaction() : time(0) {}
 
-	Interaction(const  Eigen::Vector3d &p, 
-		const Eigen::Vector3d &n, 
-		const Eigen::Vector3d &pError,
-		const Eigen::Vector3d &wo, 
-		double time,
-		const MediumInterface &mediumInterface)
-		: p(p), pError(pError), wo(wo), time(time), n(n),
-		mediumInterface(mediumInterface) { }
-
+	Interaction(const Point3f& p,
+		const Normal3f& n,
+		const Vector3f& pError,
+		const Vector3f& wo,
+		Float time,
+		const MediumInterface mediumInterface);
 
 	// TODO: p115
 	bool IsSurfaceInteraction() const;
 
 };
 
-
-
 class SurfaceInteraction : public Interaction
 {
 public:
 
-	// surface coordinates
-	Eigen::Vector2d uv;
+	// surface u, v coordinates
+	Point2f uv;
 	// partial derivatives of p and n on u and v
 	// they lays on the tangent plane cuz derivatives!
-	Eigen::Vector3d dpdu, dpdv, dndu, dndv;
+	Vector3f dpdu, dpdv;
+	Normal3f dndu, dndv;
 
 	const Shape* shape = nullptr;
 
 	// shading struct are for secondary normal values, used for stuffs like bump mappings 
-	// or per-vertex nromals... etc
+	// or per-vertex normals... etc
 	struct {
-		Eigen::Vector3d n, dpdu, dpdv, dndu, dndv;
+		Normal3f n;
+		Vector3f dpdu, dpdv;
+		Normal3f dndu, dndv;
 	} shading;
 
 public:
+
 	SurfaceInteraction() {}
 
-	SurfaceInteraction(const Eigen::Vector3d& p,
-		const Eigen::Vector3d& pError,
-		const Eigen::Vector2d& uv,
-		const Eigen::Vector3d& wo,
-		const Eigen::Vector3d& dpdu,
-		const Eigen::Vector3d& dpdv,
-		const Eigen::Vector3d& dndu,
-		const Eigen::Vector3d& dndv,
-		double time,
-		const Shape* shape)
-		: Interaction(p, dpdu.cross(dpdv).normalized(), pError, wo, time, MediumInterface()),
-		uv(uv), dpdu(dpdu), dpdv(dpdv), dndu(dndu), dndv(dndv), shape(shape)
-	{
-		surfaceInteraction = true;
-		shading.n = n;
-		shading.dpdu = dpdu;
-		shading.dpdv = dpdv;
-		shading.dndu = dndu;
-		shading.dndv = dndv;
-
-		// sometime normals needs to be reversed (specified in the input)
-		if (shape && (shape->reverseOrientation ^ shape->transformSwapsHandedness)) {
-			n *= -1;
-			shading.n *= -1;
-		}
-	}
-
-	// update shading struct
-	void SetShadingGeometry(const Eigen::Vector3d& dpdus, const Eigen::Vector3d& dpdvs,
-		const Eigen::Vector3d& dndus, const Eigen::Vector3d& dndvs, bool orientationIsAuthoritative);
-
-	void ComputeScatteringFunctions(Ray r, MemoryArena m) {}
-	Spectrum Le(Vector3f wo) {};
+	SurfaceInteraction::SurfaceInteraction(const Point3f& p,
+		const Vector3f& pError,
+		const Point2f& uv,
+		const Vector3f& wo,
+		const Vector3f& dpdu,
+		const Vector3f& dpdv,
+		const Normal3f& dndu,
+		const Normal3f& dndv,
+		Float time,
+		const Shape* shape);
 
 	~SurfaceInteraction() {}
 
-private:
+	// update shading struct
+	void SetShadingGeometry(const Vector3f& dpdus, const Vector3f& dpdvs,
+		const Normal3f& dndus, const Normal3f& dndvs, bool orientationIsAuthoritative);
+
+	void ComputeScatteringFunctions(Ray r, MemoryArena m) {}
+	
+	Spectrum Le(Vector3f wo) {};
+
+
 
 };
 

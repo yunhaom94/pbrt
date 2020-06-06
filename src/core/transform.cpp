@@ -185,6 +185,26 @@ bool Transform::SwapsHandedness() const
 SurfaceInteraction Transform::operator()(const SurfaceInteraction& si) const
 {
 	SurfaceInteraction ret;
-	// TODO: p120
+	// TODO: Transform p and pError in SurfaceInteraction p229
+
+	// TODO: maybe write a clone function
+	ret.wo = TransformVector(si.wo);
+	ret.n = TransformNormal(si.n);
+	ret.time = si.time;
+	ret.bsdf = si.bsdf;
+	ret.surfaceInteraction = si.surfaceInteraction;
+	ret.mediumInterface = si.mediumInterface;
+	ret.uv = si.uv;
+	ret.dpdu = TransformVector(si.dpdu);
+	ret.dpdv = TransformVector(si.dpdv);
+	ret.dndu = TransformNormal(si.dndu);
+	ret.dndv = TransformNormal(si.dndv);
+	ret.shape = si.shape;
+	ret.shading.n = TransformNormal(si.shading.n).normalized();
+	ret.shading.dpdu = TransformVector(si.shading.dpdu);
+	ret.shading.dpdv = TransformVector(si.shading.dpdv);
+	ret.shading.dndu = TransformNormal(si.shading.dndu);
+	ret.shading.dndv = TransformNormal(si.shading.dndv);
+
 	return ret;
 }

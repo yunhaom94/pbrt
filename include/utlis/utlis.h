@@ -28,3 +28,8 @@ inline T Clamp(T val, U low, V high) {
     else if (val > high) return high;
     else return val;
 }
+
+template <typename T> 
+inline Eigen::Matrix<T, 3, 1> Faceforward(const Eigen::Matrix<T, 3, 1>& n, const Eigen::Matrix<T, 3, 1>& v) {
+        return (n.dot(v) < 0) ? -n : n;
+    }
