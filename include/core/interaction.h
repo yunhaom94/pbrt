@@ -3,7 +3,7 @@
 #include "core/pbrt.h"
 #include "core/medium_interface.h"
 #include "core/bxdf.h"
-
+// TODO: move extra .h
 class BSDF // TODO: remove this
 {
 
@@ -18,8 +18,6 @@ private:
 
 };
 
-
-// TODO: move extra .h
 struct Interaction
 {
 	// point of intersection and slight offset on intersection point
@@ -49,7 +47,6 @@ struct Interaction
 		Float time,
 		const MediumInterface mediumInterface);
 
-	// TODO: p115
 	bool IsSurfaceInteraction() const;
 
 };

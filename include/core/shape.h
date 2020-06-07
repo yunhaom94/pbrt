@@ -1,21 +1,15 @@
 #pragma once
 
-#include <Eigen/Core>
-
 #include "core/pbrt.h"
-#include "core/bounding_boxes.h"
-#include "transform.h"
 
 
-
-// this is the base shape interface
-// very similiar to HW3 and HW4 in the idea
-// of using polymorphism
+// This is the base shape interface used by Primitive to contain geometric info.
+// All spheres are defined in a coordinate system where the center of
+// the sphere is at the origin.
 class Shape
 {
 
 public:
-	Transform s;
 	const Transform *ObjectToWorld, *WorldToObject;
 	bool reverseOrientation;
 	bool transformSwapsHandedness;
@@ -28,6 +22,8 @@ public:
 	Shape(const Transform* ObjectToWorld,
 		const Transform* WorldToObject,
 		bool reverseOrientation);
+
+	~Shape() {}
 
 	// return a bounding box around the object
 	virtual Bounds3f ObjectBound() const = 0;
@@ -44,18 +40,13 @@ public:
 	virtual bool Intersect(const Ray& ray, double& tHit,
 		SurfaceInteraction* isect, bool testAlphaTexture = true) const = 0;
 
-	// simple check for intersection, no additional infp
+	// simple check for intersection, no additional info
 	virtual bool IntersectP(const Ray& ray,
 		bool testAlphaTexture = true) const;
 
 	// surface area
-	virtual double Area() const = 0;
+	virtual Float Area() const = 0;
 
-
-
-	~Shape() {}
-
-private:
 
 };
 

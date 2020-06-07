@@ -136,97 +136,13 @@ public:
 
 	// TODO: iterator for something? p81
 
-	// From hw4 ray_intersect_box
-	template <typename T>
-	bool IntersectP(const Ray& ray, double& hitt0,
-		double& hitt1) const
-	{
-		Eigen::Vector3d o = ray.o;
-		Eigen::Vector3d d = ray.d;
-
-		T xmin = pMin[0];
-		T ymin = pMin[1];
-		T zmin = pMin[2];
-		T xmax = pMax[0];
-		T ymax = pMax[1];
-		T zmax = pMax[2];
-
-		// inside box
-		if (o[0] >= xmin &&
-			o[1] >= ymin &&
-			o[2] >= zmin &&
-			o[0] <= xmax &&
-			o[1] <= ymax &&
-			o[2] <= zmax)
-		{
-			hitt0 = 0;
-			return true;
-		}
-
-		T txmin, txmax, tymin, tymax, tzmin, tzmax;
-
-		double xrec = 1 / d[0];
-		if (xrec >= 0)
-		{
-			txmin = xrec * (xmin - o[0]);
-			txmax = xrec * (xmax - o[0]);
-		}
-		else
-		{
-			txmin = xrec * (xmax - o[0]);
-			txmax = xrec * (xmin - o[0]);
-		}
-
-		double yrec = 1 / d[1];
-		if (yrec >= 0)
-		{
-			tymin = yrec * (ymin - o[1]);
-			tymax = yrec * (ymax - o[1]);
-		}
-		else
-		{
-			tymin = yrec * (ymax - o[1]);
-			tymax = yrec * (ymin - o[1]);
-		}
-
-		double zrec = 1 / d[2];
-		if (zrec >= 0)
-		{
-			tzmin = zrec * (zmin - o[2]);
-			tzmax = zrec * (zmax - o[2]);
-		}
-		else
-		{
-			tzmin = zrec * (zmax - o[2]);
-			tzmax = zrec * (zmin - o[2]);
-		}
-
-		double tmin = std::max(std::max(txmin, tymin), tzmin);
-		double tmax = std::min(std::min(txmax, tymax), tzmax);
-
-		if (tmin > tmax || tmin > ray.tMax)
-			return false;
-		else
-		{
-			hitt0 = tmin;
-			hitt1 = tmax;
-			return true;
-		}
-	}
+	// Ray Bounding box intersect, same as 418 HW4
+	inline bool IntersectP(const Ray& ray, Float* hitt0,
+		Float* hitt1) const;
 
 	// same as last one but with recs already calculated
-	template <typename T>
-	bool IntersectP(const Ray& ray, const Eigen::Vector3d& invDir,
-		const int dirIsNeg[3]) const
-	{
-		//TODO: p128
-		return false;
-	}
-
-	//TODO: 
-
-
-private:
+	inline bool IntersectP(const Ray& ray, const Vector3f& invDir,
+		const int dirIsNeg[3]) const;
 
 };
 
@@ -302,4 +218,57 @@ inline Bounds3<T> Expand(const Bounds3<T>& b, U delta)
 {
 	return Bounds3<T>(b.pMin - Eigen::Matrix<T, 3, 1>(delta, delta, delta),
 		              b.pMax + Eigen::Matrix<T, 3, 1>(delta, delta, delta));
+}
+
+template<typename T>
+inline bool Bounds3<T>::IntersectP(const Ray& ray, Float* hitt0, Float* hitt1) const
+{
+	Float t0 = 0, t1 = ray.tMax;
+	for (int i = 0; i < 3; ++i) {
+		// Update interval for _i_th bounding box slab
+		Float invRayDir = 1 / ray.d[i];
+		Float tNear = (pMin[i] - ray.o[i]) * invRayDir;
+		Float tFar = (pMax[i] - ray.o[i]) * invRayDir;
+
+		// Update parametric interval from slab intersection $t$ values
+		if (tNear > tFar) std::swap(tNear, tFar);
+
+		// Update _tFar_ to ensure robust ray--bounds intersection
+		tFar *= 1 + 2 * gamma(3);
+		t0 = tNear > t0 ? tNear : t0;
+		t1 = tFar < t1 ? tFar : t1;
+		if (t0 > t1) return false;
+	}
+	if (hitt0) *hitt0 = t0;
+	if (hitt1) *hitt1 = t1;
+	return true;
+}
+
+template<typename T>
+inline bool Bounds3<T>::IntersectP(const Ray& ray, const Vector3f& invDir, const int dirIsNeg[3]) const
+{
+	const Bounds3f& bounds = *this;
+	// Check for ray intersection against $x$ and $y$ slabs
+	Float tMin = (bounds[dirIsNeg[0]].x - ray.o.x) * invDir.x;
+	Float tMax = (bounds[1 - dirIsNeg[0]].x - ray.o.x) * invDir.x;
+	Float tyMin = (bounds[dirIsNeg[1]].y - ray.o.y) * invDir.y;
+	Float tyMax = (bounds[1 - dirIsNeg[1]].y - ray.o.y) * invDir.y;
+
+	// Update _tMax_ and _tyMax_ to ensure robust bounds intersection
+	tMax *= 1 + 2 * gamma(3);
+	tyMax *= 1 + 2 * gamma(3);
+	if (tMin > tyMax || tyMin > tMax) return false;
+	if (tyMin > tMin) tMin = tyMin;
+	if (tyMax < tMax) tMax = tyMax;
+
+	// Check for ray intersection against $z$ slab
+	Float tzMin = (bounds[dirIsNeg[2]].z - ray.o.z) * invDir.z;
+	Float tzMax = (bounds[1 - dirIsNeg[2]].z - ray.o.z) * invDir.z;
+
+	// Update _tzMax_ to ensure robust bounds intersection
+	tzMax *= 1 + 2 * gamma(3);
+	if (tMin > tzMax || tzMin > tMax) return false;
+	if (tzMin > tMin) tMin = tzMin;
+	if (tzMax < tMax) tMax = tzMax;
+	return (tMin < ray.tMax) && (tMax > 0);
 }
