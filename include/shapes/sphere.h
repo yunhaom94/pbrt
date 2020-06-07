@@ -6,26 +6,30 @@
 class Sphere : public Shape
 {
 public:
-	   const double radius;
-	// part of the sphere can be cut off
-	   const double zMin, zMax, thetaMin, thetaMax, phiMax;
+	const Float radius;
+	// if over the section of sphere is cut off
+	const Float zMin, zMax;
+	const Float thetaMin, thetaMax, phiMax;
 
 public:
 
 	Sphere(const Transform* ObjectToWorld,
 		const Transform* WorldToObject,
 		bool reverseOrientation,
-		double radius,
-		double zMin,
-		double zMax,
-		double phiMax);
+		Float radius,
+		Float zMin,
+		Float zMax,
+		Float phiMax);
 
 	// return an bounding box around the shpere
 	Bounds3f ObjectBound() const;
 
-	// hw2
-	bool Intersect(const Ray& r, double& tHit,
+	bool Intersect(const Ray& r, Float* tHit,
 		SurfaceInteraction* isect, bool testAlphaTexture) const;
+
+	// TODO: try this later, intersect with 418 hw2
+	//bool Intersect418(const Ray& r, double& tHit, SurfaceInteraction* isect, bool testAlphaTexture) const; 
+
 
 	// bool Sphere::IntersectP(const Ray &r, bool testAlphaTexture) const
 
