@@ -21,7 +21,12 @@ int main()
     v << 2, 3, 4, 0;
 
 
-    std::cout << v.transpose() * m;
+    std::cout << v;
+
+    v.x() = 5;
+
+    std::cout << v;
+
     return 0;
 }
 

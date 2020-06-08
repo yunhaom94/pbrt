@@ -17,11 +17,11 @@ public:
 	const Medium *medium;
 
 public:
-	Ray() : tMax(inf), time(0), medium(nullptr) {}
+	Ray() : tMax(Infinity), time(0), medium(nullptr) {}
 
 	Ray(const Point3f& o, 
 		const Vector3f& d, 
-		Float tMax = inf,
+		Float tMax = Infinity,
 		Float time = 0, 
 		const Medium* medium = nullptr)
 		: o(o), d(d), tMax(tMax), time(time), medium(medium) {}
@@ -29,7 +29,7 @@ public:
 	~Ray() {}
 
 	// overload () operator
-	Eigen::Vector3d operator()(Float t) const;
+	Point3f operator()(Float t) const;
 
 };
 

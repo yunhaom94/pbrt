@@ -133,25 +133,46 @@ Transform LookAt(const Vector3f& pos, const Vector3f& look, const Vector3f& up)
 Ray Transform::operator()(const Ray& r) const
 {
 	Vector3f oError;
-	Point3f o3 = TransformPoint(r.o);
-	Vector3f d3 = TransformVector(r.d);
+	Point3f o3 = (*this)(r.o);
+	Vector3f d3 = (*this)(r.d);
 
 	// TODO: Offset ray origin to edge of error bounds and compute tMax p233
 
 	return Ray(o3, d3, r.tMax, r.time, r.medium);
 }
 
+Ray Transform::operator()(const Ray& r, Vector3f* oError, Vector3f* dError) const
+{
+	Point3f o = (*this)(r.o, oError);
+	Vector3f d = (*this)(r.d, dError);
+
+	// TODO: Offset ray origin to edge of error bounds and compute tMax p233
+
+	return Ray(o, d, r.tMax, r.time, r.medium);
+}
+
+Ray Transform::operator()(const Ray& r, const Vector3f& oErrorIn, const Vector3f& dErrorIn, Vector3f* oErrorOut, Vector3f* dErrorOut) const
+{
+	Point3f o = (*this)(r.o, oErrorIn, oErrorOut);
+	Vector3f d = (*this)(r.d, dErrorIn, dErrorOut);
+
+	// TODO: Offset ray origin to edge of error bounds and compute tMax p233
+
+	return Ray(o, d, r.tMax, r.time, r.medium);
+}
+
+
 Bounds3f Transform::operator()(const Bounds3f& b) const
 {
-
-	Bounds3f ret(TransformPoint(Point3f(b.pMin.x(), b.pMin.y(), b.pMin.z())));
-	ret = Union(ret, TransformPoint(Point3f(b.pMax.x(), b.pMin.y(), b.pMin.z())));
-	ret = Union(ret, TransformPoint(Point3f(b.pMin.x(), b.pMax.y(), b.pMin.z())));
-	ret = Union(ret, TransformPoint(Point3f(b.pMin.x(), b.pMin.y(), b.pMax.z())));
-	ret = Union(ret, TransformPoint(Point3f(b.pMin.x(), b.pMax.y(), b.pMax.z())));
-	ret = Union(ret, TransformPoint(Point3f(b.pMax.x(), b.pMax.y(), b.pMin.z())));
-	ret = Union(ret, TransformPoint(Point3f(b.pMax.x(), b.pMin.y(), b.pMax.z())));
-	ret = Union(ret, TransformPoint(Point3f(b.pMax.x(), b.pMax.y(), b.pMax.z())));
+	const Transform& M = *this;
+	Bounds3f ret(M(Point3f(b.pMin.x(), b.pMin.y(), b.pMin.z())));
+	ret = Union(ret, M(Point3f(b.pMax.x(), b.pMin.y(), b.pMin.z())));
+	ret = Union(ret, M(Point3f(b.pMin.x(), b.pMax.y(), b.pMin.z())));
+	ret = Union(ret, M(Point3f(b.pMin.x(), b.pMin.y(), b.pMax.z())));
+	ret = Union(ret, M(Point3f(b.pMin.x(), b.pMax.y(), b.pMax.z())));
+	ret = Union(ret, M(Point3f(b.pMax.x(), b.pMax.y(), b.pMin.z())));
+	ret = Union(ret, M(Point3f(b.pMax.x(), b.pMin.y(), b.pMax.z())));
+	ret = Union(ret, M(Point3f(b.pMax.x(), b.pMax.y(), b.pMax.z())));
 	return ret;
 
 
@@ -163,9 +184,9 @@ Transform Transform::operator*(const Transform& t2) const {
 
 bool Transform::HasScale() const
 {
-	Float la2 = TransformVector(Vector3f(1, 0, 0)).squaredNorm();
-	Float lb2 = TransformVector(Vector3f(0, 1, 0)).squaredNorm();
-	Float lc2 = TransformVector(Vector3f(0, 0, 1)).squaredNorm();
+	Float la2 = (*this)(Vector3f(1, 0, 0)).squaredNorm();
+	Float lb2 = (*this)(Vector3f(0, 1, 0)).squaredNorm();
+	Float lc2 = (*this)(Vector3f(0, 0, 1)).squaredNorm();
 #define NOT_ONE(x) ((x) < 0.999 || (x) > 1.001)
 	return (NOT_ONE(la2) || NOT_ONE(lb2) || NOT_ONE(lc2));
 #undef NOT_ONE
@@ -188,23 +209,23 @@ SurfaceInteraction Transform::operator()(const SurfaceInteraction& si) const
 	// TODO: Transform p and pError in SurfaceInteraction p229
 
 	// TODO: maybe write a clone function
-	ret.wo = TransformVector(si.wo);
-	ret.n = TransformNormal(si.n);
+	ret.wo = (*this)(si.wo);
+	ret.n = (*this)(si.n);
 	ret.time = si.time;
 	ret.bsdf = si.bsdf;
 	ret.surfaceInteraction = si.surfaceInteraction;
 	ret.mediumInterface = si.mediumInterface;
 	ret.uv = si.uv;
-	ret.dpdu = TransformVector(si.dpdu);
-	ret.dpdv = TransformVector(si.dpdv);
-	ret.dndu = TransformNormal(si.dndu);
-	ret.dndv = TransformNormal(si.dndv);
+	ret.dpdu = (*this)(si.dpdu);
+	ret.dpdv = (*this)(si.dpdv);
+	ret.dndu = (*this)(si.dndu);
+	ret.dndv = (*this)(si.dndv);
 	ret.shape = si.shape;
-	ret.shading.n = TransformNormal(si.shading.n).normalized();
-	ret.shading.dpdu = TransformVector(si.shading.dpdu);
-	ret.shading.dpdv = TransformVector(si.shading.dpdv);
-	ret.shading.dndu = TransformNormal(si.shading.dndu);
-	ret.shading.dndv = TransformNormal(si.shading.dndv);
+	ret.shading.n = (*this)(si.shading.n).normalized();
+	ret.shading.dpdu = (*this)(si.shading.dpdu);
+	ret.shading.dpdv = (*this)(si.shading.dpdv);
+	ret.shading.dndu = (*this)(si.shading.dndu);
+	ret.shading.dndv = (*this)(si.shading.dndv);
 
 	return ret;
 }

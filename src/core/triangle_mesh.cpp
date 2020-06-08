@@ -1,6 +1,6 @@
 #include "core/triangle_mesh.h"
 #include "core/transform.h"
-
+/*
 TriangleMesh::TriangleMesh(const Transform& ObjectToWorld, 
 	int nTriangles, 
 	const int& vertexIndices, 
@@ -21,3 +21,4 @@ TriangleMesh::TriangleMesh(const Transform& ObjectToWorld,
 	for (int i = 0; i < nVertices; ++i)
 		p[i] = ObjectToWorld.TransformPoint(P[i]);
 }
+*/

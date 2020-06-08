@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/pbrt.h"
+#include "utlis/utlis.h"
 
 // this is a class of transformation matrices
 // they are all 4x4 because we are in 3D world and extra dimension helps
@@ -34,19 +35,40 @@ public:
 	friend Transform Transpose(const Transform &t);
 
 	// transform a point 
-	template <typename T> 
-	inline Eigen::Matrix <T, 3, 1> TransformPoint(const Eigen::Matrix <T, 3, 1>& p) const;
-
-	// transform a vector
 	template <typename T>
-	inline Eigen::Matrix <T, 3, 1> TransformVector(const Eigen::Matrix <T, 3, 1>& p) const;
+	inline Point3<T> operator()(const Point3<T>& p) const;
+
+	template <typename T>
+	inline Point3<T> operator()(const Point3<T>& p, Vector3<T>* pError) const;
+
+	template<typename T>
+	inline Point3<T> operator()(const Point3<T>& pt, const Vector3<T>& ptError, Vector3<T>* absError) const;
+
+	template <typename T>
+	inline Vector3<T> operator()(const Vector3<T>& v) const;
+
+	template <typename T>
+	inline Vector3<T> operator()(const Vector3<T>& v, Vector3<T>* vTransError) const;
+
+	template <typename T>
+	inline Vector3<T> operator()(const Vector3<T>& v, const Vector3<T>& vError, Vector3<T>* vTransError) const;
 
 	// transform a normal
 	template <typename T>
-	inline Eigen::Matrix <T, 3, 1> TransformNormal(const Eigen::Matrix <T, 3, 1>& p) const;
+	inline Normal3<T> operator()(const Normal3<T>& n) const;
 		
 	// transform a ray
 	Ray operator()(const Ray& r) const;
+
+	Ray operator()(const Ray& r, Vector3f* oError,
+		Vector3f* dError) const;
+
+	Ray operator()(const Ray& r, const Vector3f& oErrorIn,
+		const Vector3f& dErrorIn, Vector3f* oErrorOut,
+		Vector3f* dErrorOut) const;
+
+	RayDifferential operator()(const RayDifferential& r) const;
+
 		
 	// transform a bound box
 	Bounds3f operator()(const Bounds3f& b) const;
@@ -106,13 +128,13 @@ Transform LookAt(const Vector3f& pos, const Vector3f& look, const Vector3f& up);
 inline void TransformCache() {}
 
 template<typename T>
-inline Eigen::Matrix<T, 3, 1> Transform::TransformPoint(const Eigen::Matrix<T, 3, 1>& p) const
+inline Point3<T> Transform::operator()(const Point3<T>& p) const
 {
 	
 	T x = p.x(), y = p.y(), z = p.z();
 	T wp = m.row(3)[0] * x + m.row(3)[1] * y + m.row(3)[2] * z + m.row(3)[3];
 
-	Eigen::Matrix <T, 3, 1> ret = (Eigen::Matrix <T, 4, 1>(x, y, z, 0).transpose() * m).head(3);
+	Point3<T> ret = (Eigen::Matrix <T, 4, 1>(x, y, z, 0).transpose() * m).head(3);
 
 	if (wp == 1)
 		return ret;
@@ -121,17 +143,127 @@ inline Eigen::Matrix<T, 3, 1> Transform::TransformPoint(const Eigen::Matrix<T, 3
 	
 }
 
-template<typename T>
-inline Eigen::Matrix<T, 3, 1> Transform::TransformVector(const Eigen::Matrix<T, 3, 1>& p) const
+template <typename T>
+inline Point3<T> Transform::operator()(const Point3<T>& p,
+	Vector3<T>* pError) const
 {
 	T x = p.x(), y = p.y(), z = p.z();
-	Eigen::Matrix <T, 3, 1> ret = (Eigen::Matrix <T, 4, 1>(x, y, z, 0).transpose() * m).head(3);
+	// Compute transformed coordinates from point _pt_
+	T xp = (m.row(0)[0] * x + m.row(0)[1] * y) + (m.row(0)[2] * z + m.row(0)[3]);
+	T yp = (m.row(1)[0] * x + m.row(1)[1] * y) + (m.row(1)[2] * z + m.row(1)[3]);
+	T zp = (m.row(2)[0] * x + m.row(2)[1] * y) + (m.row(2)[2] * z + m.row(2)[3]);
+	T wp = (m.row(3)[0] * x + m.row(3)[1] * y) + (m.row(3)[2] * z + m.row(3)[3]);
+
+	// Compute absolute error for transformed point
+	T xAbsSum = (std::abs(m.row(0)[0] * x) + std::abs(m.row(0)[1] * y) +
+				 std::abs(m.row(0)[2] * z) + std::abs(m.row(0)[3]));
+	T yAbsSum = (std::abs(m.row(1)[0] * x) + std::abs(m.row(1)[1] * y) +
+				 std::abs(m.row(1)[2] * z) + std::abs(m.row(1)[3]));
+	T zAbsSum = (std::abs(m.row(2)[0] * x) + std::abs(m.row(2)[1] * y) +
+		         std::abs(m.row(2)[2] * z) + std::abs(m.row(2)[3]));
+	*pError = gamma(3) * Eigen::Matrix<T, 3, 1>(xAbsSum, yAbsSum, zAbsSum);
+	//CHECK_NE(wp, 0);
+	if (wp == 1)
+		return Point3<T>(xp, yp, zp);
+	else
+		return Point3<T>(xp, yp, zp) / wp;
+}
+
+template <typename T>
+inline Point3<T> Transform::operator()(const Point3<T>& pt,
+	const Vector3<T>& ptError,
+	Vector3<T>* absError) const
+{
+	T x = pt.x(), y = pt.y(), z = pt.z();
+	T xp = (m.row(0)[0] * x + m.row(0)[1] * y) + (m.row(0)[2] * z + m.row(0)[3]);
+	T yp = (m.row(1)[0] * x + m.row(1)[1] * y) + (m.row(1)[2] * z + m.row(1)[3]);
+	T zp = (m.row(2)[0] * x + m.row(2)[1] * y) + (m.row(2)[2] * z + m.row(2)[3]);
+	T wp = (m.row(3)[0] * x + m.row(3)[1] * y) + (m.row(3)[2] * z + m.row(3)[3]);
+	absError->x() =
+		(gamma(3) + (T)1) *
+		(std::abs(m.row(0)[0]) * ptError.x() + std::abs(m.row(0)[1]) * ptError.y() +
+			std::abs(m.row(0)[2]) * ptError.z()) +
+		gamma(3) * (std::abs(m.row(0)[0] * x) + std::abs(m.row(0)[1] * y) +
+			std::abs(m.row(0)[2] * z) + std::abs(m.row(0)[3]));
+	absError->y() =
+		(gamma(3) + (T)1) *
+		(std::abs(m.row(1)[0]) * ptError.x() + std::abs(m.row(1)[1]) * ptError.y() +
+			std::abs(m.row(1)[2]) * ptError.z()) +
+		gamma(3) * (std::abs(m.row(1)[0] * x) + std::abs(m.row(1)[1] * y) +
+			std::abs(m.row(1)[2] * z) + std::abs(m.row(1)[3]));
+	absError->z() =
+		(gamma(3) + (T)1) *
+		(std::abs(m.row(2)[0]) * ptError.x() + std::abs(m.row(2)[1]) * ptError.y() +
+			std::abs(m.row(2)[2]) * ptError.z()) +
+		gamma(3) * (std::abs(m.row(2)[0] * x) + std::abs(m.row(2)[1] * y) +
+			std::abs(m.row(2)[2] * z) + std::abs(m.row(2)[3]));
+	//CHECK_NE(wp, 0);
+	if (wp == 1)
+		return Point3<T>(xp, yp, zp);
+	else
+		return Point3<T>(xp, yp, zp) / wp;
 }
 
 template<typename T>
-inline Eigen::Matrix<T, 3, 1> Transform::TransformNormal(const Eigen::Matrix<T, 3, 1>& p) const
+inline Vector3<T> Transform::operator()(const Vector3<T>& v) const
 {
-	T x = p.x(), y = p.y(), z = p.z();
-	Eigen::Matrix <T, 3, 1> ret = (Eigen::Matrix <T, 4, 1>(x, y, z, 0).transpose() * mInv).head(3);
+	T x = v.x(), y = v.y(), z = v.z();
+	Vector3<T> ret = (Eigen::Matrix <T, 4, 1>(x, y, z, 0).transpose() * m).head(3);
+	return ret;
 }
+
+template<typename T>
+inline Vector3<T> Transform::operator()(const Vector3<T>& v, Vector3<T>* absError) const
+{
+	T x = v.x(), y = v.y(), z = v.z();
+	absError->x() =
+		gamma(3) * (std::abs(m.row(0)[0] * v.x()) + std::abs(m.row(0)[1] * v.y()) +
+			std::abs(m.row(0)[2] * v.z()));
+	absError->y() =
+		gamma(3) * (std::abs(m.row(1)[0] * v.x()) + std::abs(m.row(1)[1] * v.y()) +
+			std::abs(m.row(1)[2] * v.z()));
+	absError->z() =
+		gamma(3) * (std::abs(m.row(2)[0] * v.x()) + std::abs(m.row(2)[1] * v.y()) +
+			std::abs(m.row(2)[2] * v.z()));
+	return Vector3<T>(m.row(0)[0] * x + m.row(0)[1] * y + m.row(0)[2] * z,
+		m.row(1)[0] * x + m.row(1)[1] * y + m.row(1)[2] * z,
+		m.row(2)[0] * x + m.row(2)[1] * y + m.row(2)[2] * z);
+}
+
+template<typename T>
+inline Vector3<T> Transform::operator()(const Vector3<T>& v, const Vector3<T>& vError, Vector3<T>* absError) const
+{
+	T x = v.x(), y = v.y(), z = v.z();
+	absError->x() =
+		(gamma(3) + (T)1) *
+		(std::abs(m.row(0)[0]) * vError.x() + std::abs(m.row(0)[1]) * vError.y() +
+			std::abs(m.row(0)[2]) * vError.z()) +
+		gamma(3) * (std::abs(m.row(0)[0] * v.x()) + std::abs(m.row(0)[1] * v.y()) +
+			std::abs(m.row(0)[2] * v.z()));
+	absError->y() =
+		(gamma(3) + (T)1) *
+		(std::abs(m.row(1)[0]) * vError.x() + std::abs(m.row(1)[1]) * vError.y() +
+			std::abs(m.row(1)[2]) * vError.z()) +
+		gamma(3) * (std::abs(m.row(1)[0] * v.x()) + std::abs(m.row(1)[1] * v.y()) +
+			std::abs(m.row(1)[2] * v.z()));
+	absError->z() =
+		(gamma(3) + (T)1) *
+		(std::abs(m.row(2)[0]) * vError.x() + std::abs(m.row(2)[1]) * vError.y() +
+			std::abs(m.row(2)[2]) * vError.z()) +
+		gamma(3) * (std::abs(m.row(2)[0] * v.x()) + std::abs(m.row(2)[1] * v.y()) +
+			std::abs(m.row(2)[2] * v.z()));
+	return Vector3<T>(m.row(0)[0] * x + m.row(0)[1] * y + m.row(0)[2] * z,
+		m.row(1)[0] * x + m.row(1)[1] * y + m.row(1)[2] * z,
+		m.row(2)[0] * x + m.row(2)[1] * y + m.row(2)[2] * z);
+}
+
+template<typename T>
+inline Normal3<T> Transform::operator()(const Normal3<T>&n) const
+{
+	T x = n.x(), y = n.y(), z = n.z();
+	Normal3<T> ret = (Eigen::Matrix <T, 4, 1>(x, y, z, 0).transpose() * mInv).head(3);
+	return ret;
+}
+
+
 

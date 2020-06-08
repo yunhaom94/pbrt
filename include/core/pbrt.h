@@ -82,17 +82,50 @@ typedef Bounds3<int> Bounds3i;
 typedef RGBSpectrum Spectrum;
 //typedef SampledSpectrum Spectrum;
 
-// define eigen vectors to match pbrt vectors
-// TODO: may have flag for float and double
-typedef Eigen::Vector2i Vector2i;
-typedef Eigen::Vector2i Point2i;
-typedef Eigen::Vector2d Vector2f;
-typedef Eigen::Vector2d Point2f;
 
-typedef Eigen::Vector3d Normal3f;
-typedef Eigen::Vector3d Vector3f;
-typedef Eigen::Vector3i Point3i;
-typedef Eigen::Vector3d Point3f;
+// using eigen for pbrt vectors/points/etc
+template <typename T>
+struct Vector2 : public Eigen::Matrix <T, 2, 1> 
+{
+	using Eigen::Matrix <T, 2, 1>::Matrix;
+};
+
+template <typename T>
+struct Point2 : public Eigen::Matrix <T, 2, 1> 
+{
+	using Eigen::Matrix <T, 2, 1>::Matrix;
+};
+
+template <typename T>
+struct Vector3 : public Eigen::Matrix <T, 3, 1> 
+{
+	using Eigen::Matrix <T, 3, 1>::Matrix;
+};
+
+template <typename T>
+struct Point3 : public Eigen::Matrix <T, 3, 1> 
+{
+	using Eigen::Matrix <T, 3, 1>::Matrix;
+};
+
+template <typename T>
+struct Normal3 : public Eigen::Matrix <T, 3, 1> 
+{
+	using Eigen::Matrix <T, 3, 1>::Matrix;
+};
+
+typedef Vector2<int> Vector2i;
+typedef Vector2<Float> Vector2f;
+typedef Point2<int> Point2i;
+typedef Point2<Float> Point2f;
+
+typedef Normal3<int> Normal3i;
+typedef Normal3<Float> Normal3f;
+typedef Vector3<int> Vector3i;
+typedef Vector3<Float> Vector3f;
+typedef Point3<int> Point3i;
+typedef Point3<Float> Point3f;
+
 
 typedef Eigen::Matrix4d Matrix4x4;
 

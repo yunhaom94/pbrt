@@ -1,7 +1,6 @@
 #pragma once
 #include "core/pbrt.h"
 
-// using inline so that I can define it in .h
 inline Eigen::Vector3d SphericalDirection(double sinTheta,
 	double cosTheta, double phi) {
 	return Eigen::Vector3d(sinTheta * std::cos(phi),
@@ -24,3 +23,5 @@ inline double SphericalPhi(const Eigen::Vector3d& v) {
 	double p = std::atan2(v.y(), v.x());
 	return (p < 0) ? (p + 2 * Pi) : p;
 }
+
+
