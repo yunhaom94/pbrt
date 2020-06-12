@@ -164,11 +164,11 @@ public:
 	inline void Check() const {
 		if (!std::isinf(low) && !std::isnan(low) && !std::isinf(high) &&
 			!std::isnan(high))
-			CHECK_LE(low, high);
+			//CHECK_LE(low, high);
 #ifndef NDEBUG
 		if (!std::isinf(v) && !std::isnan(v)) {
-			CHECK_LE(LowerBound(), vPrecise);
-			CHECK_LE(vPrecise, UpperBound());
+			//CHECK_LE(LowerBound(), vPrecise);
+			//CHECK_LE(vPrecise, UpperBound());
 		}
 #endif
 	}
@@ -193,7 +193,7 @@ public:
 		}
 		return *this;
 	}
-
+	/*
 	friend std::ostream& operator<<(std::ostream& os, const EFloat& ef) {
 		os << StringPrintf("v=%f (%a) - [%f, %f]",
 			ef.v, ef.v, ef.low, ef.high);
@@ -201,7 +201,7 @@ public:
 		os << StringPrintf(", precise=%.30Lf", ef.vPrecise);
 #endif // !NDEBUG
 		return os;
-	}
+	}*/
 
 private:
 	// EFloat Private Data
