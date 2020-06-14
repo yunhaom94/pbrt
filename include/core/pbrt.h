@@ -51,7 +51,9 @@ class RayDifferential;
 template <typename T> class Texture;
 
 class Shape;
-class TriangleMesh;
+class Triangle;
+struct TriangleMesh;
+
 
 class Interaction;
 class SurfaceInteraction;

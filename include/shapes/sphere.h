@@ -31,7 +31,7 @@ public:
 	//bool Intersect418(const Ray& r, double& tHit, SurfaceInteraction* isect, bool testAlphaTexture) const; 
 
 
-	bool Sphere::IntersectP(const Ray& r, bool testAlphaTexture) const;
+	bool IntersectP(const Ray& r, bool testAlphaTexture) const;
 
 	double Area() const;
 

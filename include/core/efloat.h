@@ -39,8 +39,9 @@
 #define PBRT_CORE_EFLOAT_H
 
  // core/efloat.h*
-#include "pbrt.h"
+#include "core/pbrt.h"
 //#include "stringprint.h"
+#include "utlis/utlis.h"
 
 	// EFloat Declarations
 class EFloat {

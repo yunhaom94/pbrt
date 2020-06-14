@@ -37,7 +37,7 @@ public:
 	//		isect - surface interaction point info
 	//		testAlphaTexture - Some shape implementations support 
 	//			cutting away some of their surfaces using a texture
-	virtual bool Intersect(const Ray& ray, double& tHit,
+	virtual bool Intersect(const Ray& ray, double *tHit,
 		SurfaceInteraction* isect, bool testAlphaTexture = true) const = 0;
 
 	// simple check for intersection, no additional info

@@ -20,6 +20,6 @@ bool Shape::IntersectP(const Ray& ray, bool testAlphaTexture) const
 {
 	Float tHit = ray.tMax;
 	SurfaceInteraction isect;
-	return Intersect(ray, tHit, &isect, testAlphaTexture);
+	return Intersect(ray, &tHit, &isect, testAlphaTexture);
 }
 
