@@ -96,6 +96,8 @@ public:
 	AnimatedTransform() {}
 	~AnimatedTransform() {}
 
+	void Interpolate(Float time, Transform* t) const {}
+
 private:
 
 };
