@@ -30,8 +30,9 @@ struct Interaction
 	Normal3f n;
 	Float time;
 
-	BSDF *bsdf;
-	
+	BSDF* bsdf = nullptr;
+	BSSRDF* bssrdf = nullptr;
+
 	bool surfaceInteraction = false;
 	
 	//Interactions also need to record the scattering media at their point (if any); this is handled
@@ -63,6 +64,7 @@ public:
 	Normal3f dndu, dndv;
 
 	const Shape* shape = nullptr;
+	const Primitive* primitive = nullptr;
 
 	// shading struct are for secondary normal values, used for stuffs like bump mappings 
 	// or per-vertex normals... etc

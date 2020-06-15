@@ -32,6 +32,7 @@ class Film;
 class FilmTile;
 
 class Light;
+class AreaLight;
 
 class VisibilityTester;
 
@@ -40,20 +41,19 @@ class Options;
 class Primitive;
 
 class Ray;
+class RayDifferential;
 
 class Transform;
 class AnimatedTransform;
 
 class Medium;
-
-class RayDifferential;
+class MediumInterface;
 
 template <typename T> class Texture;
 
 class Shape;
 class Triangle;
 struct TriangleMesh;
-
 
 class Interaction;
 class SurfaceInteraction;
@@ -67,8 +67,12 @@ class Camera;
 class MemoryArena;
 
 class BSDF;
+class BSSRDF;
 
-class MediumInterface;
+class Material;
+
+class TransportMode;
+
 
 // definitions
 // TODO: may have flag for float and double

@@ -2,7 +2,7 @@
 
 Scene::Scene(std::shared_ptr<Primitive> aggregate, const std::vector<std::shared_ptr<Light>>& lights) : lights(lights), aggregate(aggregate)
 {
-	worldBound = *aggregate->WorldBound(); // TODO:
+	worldBound = aggregate->WorldBound(); 
 	for (const auto& light : lights)
 		light->Preprocess(*this);
 }
