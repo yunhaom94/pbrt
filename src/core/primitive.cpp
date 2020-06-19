@@ -1,8 +1,9 @@
-#include "..\..\include\core\primitive.h"
-#include "..\..\include\core\primitive.h"
-#include "..\..\include\core\primitive.h"
-#include "..\..\include\core\primitive.h"
 #include "core/primitive.h"
+#include "core/shape.h"
+#include "core/bounding_boxes.h"
+#include "core/interaction.h"
+#include "core/transport_mode.h"
+#include "core/material.h"
 
 GeometricPrimitive::GeometricPrimitive(std::shared_ptr<Shape> shape, std::shared_ptr<Material> material,
 	std::shared_ptr<AreaLight> areaLight, MediumInterface mediumInterface) :
@@ -30,12 +31,12 @@ bool GeometricPrimitive::IntersectP(const Ray& r) const
 	return shape->IntersectP(r);
 }
 
-const AreaLight* GeometricPrimitive::GetAreaLight() const
+AreaLight* GeometricPrimitive::GetAreaLight() const
 {
 	return areaLight.get();
 }
 
-const Material* GeometricPrimitive::GetMaterial() const
+Material* GeometricPrimitive::GetMaterial() const
 {
 	return material.get();
 }
@@ -74,7 +75,7 @@ bool TransformedPrimitive::IntersectP(const Ray& r) const
 	PrimitiveToWorld.Interpolate(r.time, &InterpolatedPrimToWorld);
 	Ray ray = Inverse(InterpolatedPrimToWorld)(r);
 
-	if (!primitive->IntersectP(ray, isect))
+	if (!primitive->IntersectP(ray))
 		return false;
 
 	return true;
@@ -91,6 +92,22 @@ Material* TransformedPrimitive::GetMaterial() const
 }
 
 void TransformedPrimitive::ComputeScatteringFunctions(SurfaceInteraction* isect, MemoryArena& arena, TransportMode mode, bool allowMultipleLobes) const
+{
+	return;
+}
+
+
+AreaLight* Aggregate::GetAreaLight() const
+{
+	return nullptr;
+}
+
+Material* Aggregate::GetMaterial() const
+{
+	return nullptr;
+}
+
+void Aggregate::ComputeScatteringFunctions(SurfaceInteraction* isect, MemoryArena& arena, TransportMode mode, bool allowMultipleLobes) const
 {
 	return;
 }

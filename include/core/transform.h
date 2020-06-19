@@ -87,6 +87,11 @@ public:
 	// determine the handedness of the transformation
 	// if determiant is < 0, then the handeness is changed...somehow?
 	bool SwapsHandedness() const;
+
+	bool IsIdentity() const
+	{
+		return m.isIdentity();
+	}
 };
 
 // TODO: p97

@@ -51,8 +51,12 @@ public:
 
 	bool Intersect(const Ray& r, SurfaceInteraction* isect) const;
 	bool IntersectP(const Ray& r) const;
+	
+	Bounds3f WorldBound() const;
+
 	AreaLight* GetAreaLight() const;
 	Material* GetMaterial() const;
+	
 	void ComputeScatteringFunctions(SurfaceInteraction* isect,
 		MemoryArena& arena, TransportMode mode,
 		bool allowMultipleLobes) const;
@@ -79,6 +83,21 @@ public:
 
 	bool Intersect(const Ray& r, SurfaceInteraction* isect) const;
 	bool IntersectP(const Ray& r) const;
+
+	// should not be called:
+	AreaLight* GetAreaLight() const;
+	Material* GetMaterial() const;
+	void ComputeScatteringFunctions(SurfaceInteraction* isect,
+		MemoryArena& arena, TransportMode mode,
+		bool allowMultipleLobes) const;
+};
+
+// the class for accelerate structures
+// basically a interface to multiple primitives
+class Aggregate : public Primitive 
+{
+public:
+
 
 	// should not be called:
 	AreaLight* GetAreaLight() const;
