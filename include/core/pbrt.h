@@ -147,3 +147,6 @@ static PBRT_CONSTEXPR Float Sqrt2 = 1.41421356237309504880;
 static constexpr Float MaxFloat = std::numeric_limits<Float>::max();
 static constexpr Float Infinity = std::numeric_limits<Float>::infinity();
 #define MachineEpsilon (std::numeric_limits<Float>::epsilon() * 0.5)
+#ifndef PBRT_L1_CACHE_LINE_SIZE
+	#define PBRT_L1_CACHE_LINE_SIZE 64
+#endif

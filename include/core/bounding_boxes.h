@@ -83,7 +83,7 @@ public:
 	T SurfaceArea() const
 	{
 		Eigen::Matrix<T, 3, 1> d = Diagonal();
-		return 2 * (d.x() * d.y() + d.x() * d.z() + d.y * d.z());
+		return 2 * (d.x() * d.y() + d.x() * d.z() + d.y() * d.z());
 	}
 
 	T Volume() const

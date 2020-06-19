@@ -83,6 +83,7 @@ BVHBuildNode* BVHAccel::recursiveBuild(MemoryArena& arena, std::vector<BVHPrimit
 			switch (splitMethod)
 			{
 			case SplitMethod::Middle:
+			{
 				Float pmid = (centroidBounds.pMin[dim] + centroidBounds.pMax[dim]) / 2;
 				BVHPrimitiveInfo* midPtr =
 					std::partition(&primitiveInfo[start], &primitiveInfo[end - 1] + 1,
@@ -92,8 +93,9 @@ BVHBuildNode* BVHAccel::recursiveBuild(MemoryArena& arena, std::vector<BVHPrimit
 				mid = midPtr - &primitiveInfo[0];
 				if (mid != start && mid != end)
 					break;
-
+			}
 			case SplitMethod::EqualCounts:
+			{
 				mid = (start + end) / 2;
 				std::nth_element(&primitiveInfo[start], &primitiveInfo[mid],
 					&primitiveInfo[end - 1] + 1,
@@ -101,9 +103,10 @@ BVHBuildNode* BVHAccel::recursiveBuild(MemoryArena& arena, std::vector<BVHPrimit
 					return a.centroid[dim] < b.centroid[dim];
 				});
 				break;
-
+			}
 			case SplitMethod::SAH:
-				if (nPrimitives <= 4) 
+			{
+				if (nPrimitives <= 4)
 				{	// equal division for small groups
 					std::nth_element(&primitiveInfo[start], &primitiveInfo[mid],
 						&primitiveInfo[end - 1] + 1,
@@ -113,18 +116,18 @@ BVHBuildNode* BVHAccel::recursiveBuild(MemoryArena& arena, std::vector<BVHPrimit
 					});
 					break;
 				}
-				else 
+				else
 				{
 					// using something similar to a bucket sort?
 					constexpr int nBuckets = 12;
-					struct BucketInfo 
+					struct BucketInfo
 					{
 						int count = 0;
 						Bounds3f bounds;
 					};
 					BucketInfo buckets[nBuckets];
 
-					for (int i = start; i < end; ++i) 
+					for (int i = start; i < end; ++i)
 					{
 						int b = nBuckets *
 							centroidBounds.Offset(primitiveInfo[i].centroid)[dim];
@@ -135,16 +138,16 @@ BVHBuildNode* BVHAccel::recursiveBuild(MemoryArena& arena, std::vector<BVHPrimit
 
 					// compute cost for splitting
 					Float cost[nBuckets - 1];
-					for (int i = 0; i < nBuckets - 1; ++i) 
+					for (int i = 0; i < nBuckets - 1; ++i)
 					{
 						Bounds3f b0, b1;
 						int count0 = 0, count1 = 0;
-						for (int j = 0; j <= i; ++j) 
+						for (int j = 0; j <= i; ++j)
 						{
 							b0 = Union(b0, buckets[j].bounds);
 							count0 += buckets[j].count;
 						}
-						for (int j = i + 1; j < nBuckets; ++j) 
+						for (int j = i + 1; j < nBuckets; ++j)
 						{
 							b1 = Union(b1, buckets[j].bounds);
 							count1 += buckets[j].count;
@@ -155,7 +158,7 @@ BVHBuildNode* BVHAccel::recursiveBuild(MemoryArena& arena, std::vector<BVHPrimit
 
 					Float minCost = cost[0];
 					int minCostSplitBucket = 0;
-					for (int i = 1; i < nBuckets - 1; ++i) 
+					for (int i = 1; i < nBuckets - 1; ++i)
 					{
 						if (cost[i] < minCost)
 						{
@@ -165,7 +168,7 @@ BVHBuildNode* BVHAccel::recursiveBuild(MemoryArena& arena, std::vector<BVHPrimit
 					}
 
 					Float leafCost = nPrimitives;
-					if (nPrimitives > maxPrimsInNode || minCost < leafCost) 
+					if (nPrimitives > maxPrimsInNode || minCost < leafCost)
 					{
 						BVHPrimitiveInfo* pmid = std::partition(&primitiveInfo[start],
 							&primitiveInfo[end - 1] + 1,
@@ -176,7 +179,7 @@ BVHBuildNode* BVHAccel::recursiveBuild(MemoryArena& arena, std::vector<BVHPrimit
 						});
 						mid = pmid - &primitiveInfo[0];
 					}
-					else 
+					else
 					{
 						int firstPrimOffset = orderedPrims.size();
 						for (int i = start; i < end; ++i) {
@@ -186,11 +189,12 @@ BVHBuildNode* BVHAccel::recursiveBuild(MemoryArena& arena, std::vector<BVHPrimit
 						node->InitLeaf(firstPrimOffset, nPrimitives, bounds);
 						return node;
 					}
-					
+
 				}
 
 
 				break;
+			}
 			}
 
 			node->InitInterior(dim,

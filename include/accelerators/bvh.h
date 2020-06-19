@@ -51,7 +51,7 @@ struct BVHBuildNode
 	}
 };
 
-class BVHAccel
+class BVHAccel : public Aggregate
 {
 public:
 
