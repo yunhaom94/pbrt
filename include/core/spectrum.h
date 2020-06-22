@@ -1,127 +1,267 @@
 #pragma once
-
-#include "core/coefficient_spectrum.h"
+#include "core/pbrt.h"
 #include "utlis/utlis.h"
 
-enum class SpectrumType { Reflectance, Illuminant };
+// Spectrum Utility Declarations
 
+// convert xyz to rgb
+inline void XYZToRGB(const Float xyz[3], Float rgb[3]) 
+{
+	rgb[0] = 3.240479 * xyz[0] - 1.537150 * xyz[1] - 0.498535 * xyz[2];
+	rgb[1] = -0.969256 * xyz[0] + 1.875991 * xyz[1] + 0.041556 * xyz[2];
+	rgb[2] = 0.055648 * xyz[0] - 0.204043 * xyz[1] + 1.057311 * xyz[2];
+}
+
+inline void RGBToXYZ(const Float rgb[3], Float xyz[3]) 
+{
+	xyz[0] = 0.412453 * rgb[0] + 0.357580 * rgb[1] + 0.180423 * rgb[2];
+	xyz[1] = 0.212671 * rgb[0] + 0.715160 * rgb[1] + 0.072169 * rgb[2];
+	xyz[2] = 0.019334 * rgb[0] + 0.119193 * rgb[1] + 0.950227 * rgb[2];
+}
+
+template <int nSpectrumSamples> 
+class CoefficientSpectrum
+{
+public:
+	// template for static array allocation, i think
+	Float c[nSpectrumSamples];
+	static const int nSamples = nSpectrumSamples;
+
+public:
+	CoefficientSpectrum(Float v = 0)
+	{
+		for (int i = 0; i < nSpectrumSamples; ++i)
+			c[i] = v;
+	}
+
+	// sum of 2 spectrum are the sum of coefficient
+	// same for other operations
+	CoefficientSpectrum& operator+=(const CoefficientSpectrum& s2)
+	{
+		for (int i = 0; i < nSpectrumSamples; ++i)
+			c[i] += s2.c[i];
+		return *this;
+	}
+
+	CoefficientSpectrum operator+(const CoefficientSpectrum& s2) const
+	{
+		CoefficientSpectrum ret = *this;
+		for (int i = 0; i < nSpectrumSamples; ++i)
+			ret.c[i] += s2.c[i];
+		return ret;
+	}
+
+	CoefficientSpectrum& operator-=(const CoefficientSpectrum& s2)
+	{
+		for (int i = 0; i < nSpectrumSamples; ++i)
+			c[i] -= s2.c[i];
+		return *this;
+	}
+
+	CoefficientSpectrum operator-(const CoefficientSpectrum& s2) const
+	{
+		CoefficientSpectrum ret = *this;
+		for (int i = 0; i < nSpectrumSamples; ++i)
+			ret.c[i] -= s2.c[i];
+		return ret;
+	}
+
+	CoefficientSpectrum& operator*=(const CoefficientSpectrum& s2)
+	{
+		for (int i = 0; i < nSpectrumSamples; ++i)
+			c[i] *= s2.c[i];
+		return *this;
+	}
+
+	CoefficientSpectrum operator*(const CoefficientSpectrum& s2) const
+	{
+		CoefficientSpectrum ret = *this;
+		for (int i = 0; i < nSpectrumSamples; ++i)
+			ret.c[i] *= s2.c[i];
+		return ret;
+	}
+
+	CoefficientSpectrum& operator/=(const CoefficientSpectrum& s2) const
+	{
+		for (int i = 0; i < nSpectrumSamples; ++i)
+			c[i] /= s2.c[i];
+		return *this;
+	}
+
+	CoefficientSpectrum operator/(const CoefficientSpectrum& s2) const
+	{
+		CoefficientSpectrum ret = *this;
+		for (int i = 0; i < nSpectrumSamples; ++i)
+			ret.c[i] /= s2.c[i];
+		return ret;
+	}
+
+	bool operator==(const CoefficientSpectrum& s2) const
+	{
+
+		for (int i = 0; i < nSpectrumSamples; ++i)
+		{
+			if (c[i] != s2.c[i])
+				return false;
+		}
+
+		return true
+	}
+
+	bool operator!=(const CoefficientSpectrum& s2) const
+	{
+
+		return (*this == s2);
+	}
+
+	CoefficientSpectrum operator*(Float a) const
+	{
+		CoefficientSpectrum ret = *this;
+		for (int i = 0; i < nSpectrumSamples; ++i)
+			ret.c[i] *= a;
+
+		return ret;
+	}
+	CoefficientSpectrum& operator*=(Float a) 
+	{
+		for (int i = 0; i < nSpectrumSamples; ++i) 
+			c[i] *= a;
+
+		return *this;
+	}
+
+	// inline friend: https://stackoverflow.com/questions/381164/friend-and-inline-method-whats-the-point
+	friend inline CoefficientSpectrum operator*(Float a,
+		const CoefficientSpectrum& s)
+	{
+		return s * a;
+	}
+
+	friend CoefficientSpectrum Sqrt(const CoefficientSpectrum& s) {
+		CoefficientSpectrum ret;
+		for (int i = 0; i < nSpectrumSamples; ++i)
+			ret.c[i] = std::sqrt(s.c[i]);
+		return ret;
+	}
+
+	bool IsBlack() const
+	{
+		for (int i = 0; i < nSpectrumSamples; ++i)
+		{
+			if (c[i] != 0)
+				return false;
+		}
+		return true;
+
+	}
+
+	// linearly interpolate
+	inline Spectrum Lerp(Float t, const Spectrum& s1, const Spectrum& s2)
+	{
+		return (1 - t) * s1 + t * s2;
+	}
+
+	CoefficientSpectrum Clamp(Float low = 0, Float high = Infinity) const
+	{
+		CoefficientSpectrum ret;
+		for (int i = 0; i < nSpectrumSamples; ++i)
+			ret.c[i] = ::Clamp(c[i], low, high);// global name-space
+		return ret;
+	}
+
+	// check if anything is not a number
+	// in case accident division by 0
+	bool HasNaNs() const 
+	{
+		for (int i = 0; i < nSpectrumSamples; ++i)
+		{
+			if (std::isnan(c[i])) 
+				return true;
+		}
+		return false;
+	}
+
+	Float& operator[](int i)
+	{
+		return c[i];
+	}
+
+protected:
+
+
+};
+
+// sample spectrum definitions:
 static const int sampledLambdaStart = 400;
 static const int sampledLambdaEnd = 700;
 static const int nSpectralSamples = 60;
 
 static const int nCIESamples = 471;
-extern const double CIE_X[nCIESamples];
-extern const double CIE_Y[nCIESamples];
-extern const double CIE_Z[nCIESamples];
-extern const double CIE_lambda[nCIESamples];
-static const double CIE_Y_integral = 106.856895;
+static const Float CIE_Y_integral = 106.856895;
+// these should be given
+extern const Float CIE_X[nCIESamples];
+extern const Float CIE_Y[nCIESamples];
+extern const Float CIE_Z[nCIESamples];
+extern const Float CIE_lambda[nCIESamples];
 
+static const int nRGB2SpectSamples = 32;
+extern const Float RGB2SpectLambda[nRGB2SpectSamples];
+extern const Float RGBRefl2SpectWhite[nRGB2SpectSamples];
+extern const Float RGBRefl2SpectCyan[nRGB2SpectSamples];
+extern const Float RGBRefl2SpectMagenta[nRGB2SpectSamples];
+extern const Float RGBRefl2SpectYellow[nRGB2SpectSamples];
+extern const Float RGBRefl2SpectRed[nRGB2SpectSamples];
+extern const Float RGBRefl2SpectGreen[nRGB2SpectSamples];
+extern const Float RGBRefl2SpectBlue[nRGB2SpectSamples];
 
-static bool SpectrumSamplesSorted(const double* lambda, const double* v, int n)
-{
-	double last_l = lambda[0];
+extern const Float RGBIllum2SpectWhite[nRGB2SpectSamples];
+extern const Float RGBIllum2SpectCyan[nRGB2SpectSamples];
+extern const Float RGBIllum2SpectMagenta[nRGB2SpectSamples];
+extern const Float RGBIllum2SpectYellow[nRGB2SpectSamples];
+extern const Float RGBIllum2SpectRed[nRGB2SpectSamples];
+extern const Float RGBIllum2SpectGreen[nRGB2SpectSamples];
+extern const Float RGBIllum2SpectBlue[nRGB2SpectSamples];
 
-	for (int i = 0; i < n; i++)
-	{
-		double l = lambda[i];
-		// check if wavelength is not sorted
-		if (l < last_l)
-			return false;
+enum class SpectrumType { Reflectance, Illuminant };
 
-		last_l = l;
-	}
-
-	return true;
-}
-
-static void SortSpectrumSamples(double* lambda, double* v, int n)
-{
-
-	// insertion sort 
-	// TODO: change this if very slow
-
-	int i, key, j;
-	for (i = 1; i < n; i++)
-	{
-		key = lambda[i];
-		j = i - 1;
-
-
-		while (j >= 0 && lambda[j] > key)
-		{
-			lambda[j + 1] = lambda[j];
-			v[j + 1] = v[j];
-			j = j - 1;
-		}
-		lambda[j + 1] = key;
-	}
-}
-
-// doing some average over area
-static double AverageSpectrumSamples(const double* lambda, const double* vals, int n, double lambdaStart, double lambdaEnd)
-{
-	//boundary check
-	if (lambdaEnd <= lambda[0]) return vals[0];
-	if (lambdaStart >= lambda[n - 1]) return vals[n - 1];
-	if (n == 1) return vals[0];
-
-	double sum = 0;
-
-	// Add contributions of constant segments before/after samples
-	if (lambdaStart < lambda[0])
-		sum += vals[0] * (lambda[0] - lambdaStart);
-	if (lambdaEnd > lambda[n - 1])
-		sum += vals[n - 1] * (lambdaEnd - lambda[n - 1]);
-
-	int i = 0;
-	while (lambdaStart > lambda[i + 1])
-		++i;
-
-	auto interp = [lambda, vals](double w, int i) {
-		return Lerp((w - lambda[i]) / (lambda[i + 1] - lambda[i]),
-			vals[i], vals[i + 1]);
-	};
-	for (; i + 1 < n && lambdaEnd >= lambda[i]; ++i) {
-		double segLambdaStart = std::max(lambdaStart, lambda[i]);
-		double segLambdaEnd = std::min(lambdaEnd, lambda[i + 1]);
-		sum += 0.5 * (interp(segLambdaStart, i) + interp(segLambdaEnd, i)) *
-			(segLambdaEnd - segLambdaStart);
-	}
-
-	return sum / (lambdaEnd - lambdaStart);
-}
-
-
-
-static double InterpolateSpectrumSamples(const double* lambda, const double* vals,
-	int n, double l) {
-	if (l <= lambda[0]) return vals[0];
-	if (l >= lambda[n - 1]) return vals[n - 1];
-	int offset = FindInterval(n,
-		[&](int index) { return lambda[index] <= l; });
-	double t = (l - lambda[offset]) / (lambda[offset + 1] - lambda[offset]);
-	return Lerp(t, vals[offset], vals[offset + 1]);
-}
+// helper functions
+bool SpectrumSamplesSorted(const Float* lambda, const Float* v, int n);
+void SortSpectrumSamples(Float* lambda, Float* v, int n);
+Float AverageSpectrumSamples(const Float* lambda, const Float* vals, int n, Float lambdaStart, Float lambdaEnd);
+Float InterpolateSpectrumSamples(const Float* lambda, const Float* vals,
+	int n, Float l);
 
 
 class SampledSpectrum : public CoefficientSpectrum<nSpectralSamples>
 {
 public:
-	SampledSpectrum(double v = 0) : CoefficientSpectrum(v) { }
 
-	// 1. give a bunch of sample points
-	// 2. connect them by lines
-	// 3. calculate sample range and n samples split location
-	// 4. calculate area of each sample segment
-	// 5. average?
-	static SampledSpectrum FromSampled(const double* lambda,
-		const double* v, int n)
+private:
+	// X,Y,Z response curves
+	static SampledSpectrum X, Y, Z;
+
+	// used to convert RGB back to SPD p328
+	static SampledSpectrum rgbRefl2SpectWhite, rgbRefl2SpectCyan;
+	static SampledSpectrum rgbRefl2SpectMagenta, rgbRefl2SpectYellow;
+	static SampledSpectrum rgbRefl2SpectRed, rgbRefl2SpectGreen;
+	static SampledSpectrum rgbRefl2SpectBlue;
+
+	static SampledSpectrum rgbIllum2SpectWhite, rgbIllum2SpectCyan;
+	static SampledSpectrum rgbIllum2SpectMagenta, rgbIllum2SpectYellow;
+	static SampledSpectrum rgbIllum2SpectRed, rgbIllum2SpectGreen;
+	static SampledSpectrum rgbIllum2SpectBlue;
+
+public:
+	// given a provided spectral data as a set of (¦Ëi , vi)
+	// where the ith sample has some value vi at wavelength ¦Ë
+	// convert to SampledSpectrum
+	static SampledSpectrum FromSampled(const Float* lambda, const Float* v, int n)
 	{
 
 		if (!SpectrumSamplesSorted(lambda, v, n)) {
 			// create a new copy to this data
-			std::vector<double> slambda(&lambda[0], &lambda[n]);
-			std::vector<double> sv(&v[0], &v[n]);
+			std::vector<Float> slambda(&lambda[0], &lambda[n]);
+			std::vector<Float> sv(&v[0], &v[n]);
 			// sort it
 			SortSpectrumSamples(&slambda[0], &sv[0], n);
 			return FromSampled(&slambda[0], &sv[0], n);
@@ -130,50 +270,27 @@ public:
 		SampledSpectrum r;
 		// spiting the spectrum into n equal segments,
 		// each starts with lambda 0 and ends with lambda 1
+		// then get average value of that interval from input
 		for (int i = 0; i < nSpectralSamples; ++i) {
-			double lambda0 = ::Lerp(double(i) / double(nSpectralSamples),
+			Float lambda0 = ::Lerp(Float(i) / Float(nSpectralSamples),
 				sampledLambdaStart, sampledLambdaEnd);
-			double lambda1 = ::Lerp(double(i + 1) / double(nSpectralSamples),
+			Float lambda1 = ::Lerp(Float(i + 1) / Float(nSpectralSamples),
 				sampledLambdaStart, sampledLambdaEnd);
 			r.c[i] = AverageSpectrumSamples(lambda, v, n, lambda0, lambda1);
 		}
+
 		return r;
 	}
 
-	// magic
-	void ToXYZ(double xyz[3]) const
-	{
-		xyz[0] = xyz[1] = xyz[2] = 0;
-		for (int i = 0; i < nSpectralSamples; ++i) {
-			xyz[0] += X.c[i] * c[i];
-			xyz[1] += Y.c[i] * c[i];
-			xyz[2] += Z.c[i] * c[i];
-		}
-		double scale = double(sampledLambdaEnd - sampledLambdaStart) /
-			double(CIE_Y_integral * nSpectralSamples);
-		xyz[0] *= scale;
-		xyz[1] *= scale;
-		xyz[2] *= scale;
-	}
 
-	// more magic
-	double y() const
+	// compute XYZ matching curves for this SampleSpectrum
+	static void Init() 
 	{
-		double yy = 0;
-		for (int i = 0; i < nSpectralSamples; ++i)
-			yy += Y.c[i] * c[i];
-		return yy * double(sampledLambdaEnd - sampledLambdaStart) /
-			double(CIE_Y_integral * nSpectralSamples);
-	}
-
-	// Compute XYZ matching functions then RGB to spectrum functions
-	// with some weird shit and magic
-	static void Init()
-	{
-		for (int i = 0; i < nSpectralSamples; ++i) {
-			double wl0 = ::Lerp(double(i) / double(nSpectralSamples),
+		for (int i = 0; i < nSpectralSamples; ++i) 
+		{
+			Float wl0 = ::Lerp(Float(i) / Float(nSpectralSamples),
 				sampledLambdaStart, sampledLambdaEnd);
-			double wl1 = ::Lerp(double(i + 1) / double(nSpectralSamples),
+			Float wl1 = ::Lerp(Float(i + 1) / Float(nSpectralSamples),
 				sampledLambdaStart, sampledLambdaEnd);
 			X.c[i] = AverageSpectrumSamples(CIE_lambda, CIE_X, nCIESamples,
 				wl0, wl1);
@@ -182,26 +299,132 @@ public:
 			Z.c[i] = AverageSpectrumSamples(CIE_lambda, CIE_Z, nCIESamples,
 				wl0, wl1);
 		}
+
+		// Compute RGB to spectrum functions for _SampledSpectrum_
+		for (int i = 0; i < nSpectralSamples; ++i) 
+		{
+			Float wl0 = ::Lerp(Float(i) / Float(nSpectralSamples),
+				sampledLambdaStart, sampledLambdaEnd);
+			Float wl1 = ::Lerp(Float(i + 1) / Float(nSpectralSamples),
+				sampledLambdaStart, sampledLambdaEnd);
+			rgbRefl2SpectWhite.c[i] =
+				AverageSpectrumSamples(RGB2SpectLambda, RGBRefl2SpectWhite,
+					nRGB2SpectSamples, wl0, wl1);
+			rgbRefl2SpectCyan.c[i] =
+				AverageSpectrumSamples(RGB2SpectLambda, RGBRefl2SpectCyan,
+					nRGB2SpectSamples, wl0, wl1);
+			rgbRefl2SpectMagenta.c[i] =
+				AverageSpectrumSamples(RGB2SpectLambda, RGBRefl2SpectMagenta,
+					nRGB2SpectSamples, wl0, wl1);
+			rgbRefl2SpectYellow.c[i] =
+				AverageSpectrumSamples(RGB2SpectLambda, RGBRefl2SpectYellow,
+					nRGB2SpectSamples, wl0, wl1);
+			rgbRefl2SpectRed.c[i] = AverageSpectrumSamples(
+				RGB2SpectLambda, RGBRefl2SpectRed, nRGB2SpectSamples, wl0, wl1);
+			rgbRefl2SpectGreen.c[i] =
+				AverageSpectrumSamples(RGB2SpectLambda, RGBRefl2SpectGreen,
+					nRGB2SpectSamples, wl0, wl1);
+			rgbRefl2SpectBlue.c[i] =
+				AverageSpectrumSamples(RGB2SpectLambda, RGBRefl2SpectBlue,
+					nRGB2SpectSamples, wl0, wl1);
+
+			rgbIllum2SpectWhite.c[i] =
+				AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectWhite,
+					nRGB2SpectSamples, wl0, wl1);
+			rgbIllum2SpectCyan.c[i] =
+				AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectCyan,
+					nRGB2SpectSamples, wl0, wl1);
+			rgbIllum2SpectMagenta.c[i] =
+				AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectMagenta,
+					nRGB2SpectSamples, wl0, wl1);
+			rgbIllum2SpectYellow.c[i] =
+				AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectYellow,
+					nRGB2SpectSamples, wl0, wl1);
+			rgbIllum2SpectRed.c[i] =
+				AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectRed,
+					nRGB2SpectSamples, wl0, wl1);
+			rgbIllum2SpectGreen.c[i] =
+				AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectGreen,
+					nRGB2SpectSamples, wl0, wl1);
+			rgbIllum2SpectBlue.c[i] =
+				AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectBlue,
+					nRGB2SpectSamples, wl0, wl1);
+		}
 	}
 
-private:
-	// global X Y Z matching functions
-	static SampledSpectrum X, Y, Z;
+	static SampledSpectrum FromRGB(const Float rgb[3], SpectrumType type);
 
-	// TODO: p325 RGB color
+	static SampledSpectrum FromXYZ(const Float xyz[3],
+		SpectrumType type = SpectrumType::Reflectance) 
+	{
+		Float rgb[3];
+		XYZToRGB(xyz, rgb);
+		return FromRGB(rgb, type);
+	}
+
+
+	SampledSpectrum(Float v = 0) : CoefficientSpectrum(v) { }
+
+	SampledSpectrum(const CoefficientSpectrum<nSpectralSamples>& v)
+		: CoefficientSpectrum<nSpectralSamples>(v) {}
+
+	SampledSpectrum(const RGBSpectrum& r, SpectrumType t);
+
+	// convert spectrum to XYZ color 
+	// used to convert to RGB color later
+	void ToXYZ(Float xyz[3]) const
+	{
+		xyz[0] = xyz[1] = xyz[2] = 0.f;
+		for (int i = 0; i < nSpectralSamples; ++i)
+		{
+			xyz[0] += X.c[i] * c[i];
+			xyz[1] += Y.c[i] * c[i];
+			xyz[2] += Z.c[i] * c[i];
+		}
+		Float scale = Float(sampledLambdaEnd - sampledLambdaStart) /
+			Float(CIE_Y_integral * nSpectralSamples);
+		xyz[0] *= scale;
+		xyz[1] *= scale;
+		xyz[2] *= scale;
+
+	}
+
+	// The y coefficient of XYZ color is important
+	Float y() const 
+	{
+		Float yy = 0.f;
+		for (int i = 0; i < nSpectralSamples; ++i)
+			yy += Y.c[i] * c[i];
+		
+		return yy * Float(sampledLambdaEnd - sampledLambdaStart) /
+			Float(CIE_Y_integral * nSpectralSamples);
+	}
+
+	void ToRGB(Float rgb[3]) const
+	{
+		Float xyz[3];
+		ToXYZ(xyz);
+		XYZToRGB(xyz, rgb);
+	}
+
+
+	
+
+	RGBSpectrum ToRGBSpectrum() const;
+
+private:
 };
 
 
 class RGBSpectrum : public CoefficientSpectrum<3>
 {
 public:
-	RGBSpectrum(double v = 0) : CoefficientSpectrum<3>(v) { }
-	RGBSpectrum(const CoefficientSpectrum<3>& v)
-		: CoefficientSpectrum<3>(v) { }
+	RGBSpectrum(Float v = 0) : CoefficientSpectrum<3>(v) { }
+	RGBSpectrum(const CoefficientSpectrum<3>& v) : CoefficientSpectrum<3>(v) { }
 
 	// converting RGB values to spectrum is trivial
-	static RGBSpectrum FromRGB(const double rgb[3],
-		SpectrumType type = SpectrumType::Reflectance) 
+	// same signature for compile time polymorphism
+	static RGBSpectrum FromRGB(const Float rgb[3], SpectrumType type = SpectrumType::Reflectance)
 	{
 		RGBSpectrum s;
 		s.c[0] = rgb[0];
@@ -211,59 +434,62 @@ public:
 	}
 
 	// same as above
-	void ToRGB(double* rgb) const 
+	void ToRGB(Float* rgb) const
 	{
 		rgb[0] = c[0];
 		rgb[1] = c[1];
 		rgb[2] = c[2];
 	}
 
-	// but why
-	const RGBSpectrum& ToRGBSpectrum() const 
-	
+	const RGBSpectrum& ToRGBSpectrum() const
+
 	{
 		return *this;
 	}
 
-	void ToXYZ() 
-	{
-	// TODO: 
+	void ToXYZ(Float xyz[3]) const 
+	{ 
+		RGBToXYZ(c, xyz); 
 	}
 
-	static RGBSpectrum FromXYZ(double *XYZ)
+	static RGBSpectrum FromXYZ(const Float xyz[3], SpectrumType type = SpectrumType::Reflectance) 
 	{
-		// TODO:
-		return NULL;
+		RGBSpectrum r;
+		XYZToRGB(xyz, r.c);
+		return r;
 	}
 
-	void y()
+	Float y() const 
 	{
-		// TODO:
+		const Float YWeight[3] = { 0.212671f, 0.715160f, 0.072169f };
+		return YWeight[0] * c[0] + YWeight[1] * c[1] + YWeight[2] * c[2];
 	}
 
 	// converts the spectrum to XYZand then to RGB.
-	static RGBSpectrum FromSampled(const double* lambda, const double* v,
-		int n) {
+	static RGBSpectrum FromSampled(const Float* lambda, const Float* v,
+		int n)
+	{
 
-		if (!SpectrumSamplesSorted(lambda, v, n)) {
+		if (!SpectrumSamplesSorted(lambda, v, n)) 
+		{
 			// create a new copy to this data
-			std::vector<double> slambda(&lambda[0], &lambda[n]);
-			std::vector<double> sv(&v[0], &v[n]);
+			std::vector<Float> slambda(&lambda[0], &lambda[n]);
+			std::vector<Float> sv(&v[0], &v[n]);
 			// sort it
 			SortSpectrumSamples(&slambda[0], &sv[0], n);
 			return FromSampled(&slambda[0], &sv[0], n);
 		}
-		
-		double xyz[3] = { 0, 0, 0 };
-		for (int i = 0; i < nCIESamples; ++i) {
-			double val = InterpolateSpectrumSamples(lambda, v, n,
-				CIE_lambda[i]);
+
+		Float xyz[3] = { 0, 0, 0 };
+		for (int i = 0; i < nCIESamples; ++i)
+		{
+			Float val = InterpolateSpectrumSamples(lambda, v, n, CIE_lambda[i]);
 			xyz[0] += val * CIE_X[i];
 			xyz[1] += val * CIE_Y[i];
 			xyz[2] += val * CIE_Z[i];
 		}
-		double scale = double(CIE_lambda[nCIESamples - 1] - CIE_lambda[0]) /
-			double(CIE_Y_integral * nCIESamples);
+		Float scale = Float(CIE_lambda[nCIESamples - 1] - CIE_lambda[0]) /
+			Float(CIE_Y_integral * nCIESamples);
 		xyz[0] *= scale;
 		xyz[1] *= scale;
 		xyz[2] *= scale;
