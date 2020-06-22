@@ -1,32 +1,38 @@
 #pragma once
 #include "core/pbrt.h"
+#include "utlis/utlis.h"
 
-inline Eigen::Vector3d SphericalDirection(double sinTheta,
-	double cosTheta, double phi) {
-	return Eigen::Vector3d(sinTheta * std::cos(phi),
-		sinTheta * std::sin(phi),
-		cosTheta);
+// convert Spherical coordinate to Cartesian 
+inline Vector3f SphericalDirection(Float sinTheta, Float cosTheta, Float phi)
+{
+	return Vector3f(sinTheta * std::cos(phi),
+					sinTheta * std::sin(phi),
+					cosTheta);
 }
 
-inline Eigen::Vector3d SphericalDirection(double sinTheta, double cosTheta, double phi,
-	const Eigen::Vector3d& x, const Eigen::Vector3d& y,
-	const Eigen::Vector3d& z) {
-	return sinTheta * std::cos(phi) * x + sinTheta * std::sin(phi) * y +
-		cosTheta * z;
+// // convert Spherical coordinate to Cartesian 
+inline Eigen::Vector3d SphericalDirection(Float sinTheta, Float cosTheta, Float phi,
+	const Vector3f& x, const Vector3f& y, const Vector3f& z)
+{
+	return sinTheta * std::cos(phi) * x + 
+		   sinTheta * std::sin(phi) * y +
+		   cosTheta * z;
 }
 
-inline double SphericalTheta(const Eigen::Vector3d& v) {
-	return std::acos(Clamp<double, double, double>(v.z(), -1, 1));
+inline Float SphericalTheta(const Vector3f& v)
+{
+	return std::acos(Clamp(v.z(), -1, 1));
 }
 
-inline double SphericalPhi(const Eigen::Vector3d& v) {
-	double p = std::atan2(v.y(), v.x());
+inline Float SphericalPhi(const Vector3f& v) {
+	Float p = std::atan2(v.y(), v.x());
 	return (p < 0) ? (p + 2 * Pi) : p;
 }
 
 
 template <typename T>
-int MaxDimension(const Vector3<T>& v) {
+int MaxDimension(const Vector3<T>& v) 
+{
 	return (v.x() > v.y()) ? ((v.x() > v.z()) ? 0 : 2) : ((v.y() > v.z()) ? 1 : 2);
 }
 
