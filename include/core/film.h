@@ -8,8 +8,8 @@
 class Film
 {
 public:
-	Film();
-	~Film();
+	Film() {}
+	~Film() {}
 
 	Bounds2i GetSampleBounds()
 	{
@@ -30,10 +30,3 @@ private:
 
 };
 
-Film::Film()
-{
-}
-
-Film::~Film()
-{
-}

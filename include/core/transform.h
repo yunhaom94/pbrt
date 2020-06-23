@@ -103,6 +103,11 @@ public:
 
 	void Interpolate(Float time, Transform* t) const {}
 
+	Ray operator()(const Ray& r) const;
+	RayDifferential operator()(const RayDifferential& r) const;
+	Point3f operator()(Float time, const Point3f& p) const;
+	Vector3f operator()(Float time, const Vector3f& v) const;
+
 private:
 
 };
@@ -130,6 +135,10 @@ Transform Rotate(Float theta, const Vector3f& axis);
 // look is the point that the camera is looking at
 // up is the up of camera
 Transform LookAt(const Vector3f& pos, const Vector3f& look, const Vector3f& up);
+
+Transform Orthographic(Float zNear, Float zFar);
+
+Transform Perspective(Float fov, Float n, Float f);
 
 // TODO: p1124
 inline void TransformCache() {}

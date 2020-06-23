@@ -111,6 +111,25 @@ Transform Rotate(Float theta, const Vector3f& axis)
 	return Transform();
 }
 
+Transform Orthographic(Float zNear, Float zFar)
+{
+	return Scale(1, 1, 1 / (zFar - zNear)) *
+		Translate(Vector3f(0, 0, -zNear));
+}
+
+Transform Perspective(Float fov, Float n, Float f)
+{
+
+	Matrix4x4 persp;
+	persp << 1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, f / (f - n), -f * n / (f - n),
+		0, 0, 1, 0;
+
+	Float invTanAng = 1 / std::tan(Radians(fov) / 2);
+	return Scale(invTanAng, invTanAng, 1) * Transform(persp);
+}
+
 Transform LookAt(const Vector3f& pos, const Vector3f& look, const Vector3f& up)
 {
 
@@ -228,4 +247,24 @@ SurfaceInteraction Transform::operator()(const SurfaceInteraction& si) const
 	ret.shading.dndv = (*this)(si.shading.dndv);
 
 	return ret;
+}
+
+Ray AnimatedTransform::operator()(const Ray& r) const
+{
+	return Ray();
+}
+
+RayDifferential AnimatedTransform::operator()(const RayDifferential& r) const
+{
+	return RayDifferential();
+}
+
+Point3f AnimatedTransform::operator()(Float time, const Point3f& p) const
+{
+	return Point3f();
+}
+
+Vector3f AnimatedTransform::operator()(Float time, const Vector3f& v) const
+{
+	return Vector3f();
 }

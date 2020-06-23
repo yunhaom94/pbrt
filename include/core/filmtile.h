@@ -7,8 +7,8 @@
 class FilmTile
 {
 public:
-	FilmTile();
-	~FilmTile();
+	FilmTile() {}
+	~FilmTile() {}
 	void AddSample(Point2f pf, Spectrum s, Float weight) {}
 
 
@@ -17,10 +17,3 @@ private:
 
 };
 
-FilmTile::FilmTile()
-{
-}
-
-FilmTile::~FilmTile()
-{
-}

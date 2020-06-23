@@ -132,7 +132,6 @@ typedef Vector3<Float> Vector3f;
 typedef Point3<int> Point3i;
 typedef Point3<Float> Point3f;
 
-
 typedef Eigen::Matrix4d Matrix4x4;
 
 // values
