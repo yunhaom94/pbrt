@@ -73,6 +73,8 @@ class Material;
 
 class TransportMode;
 
+class RNG;
+
 
 // definitions
 // TODO: may have flag for float and double
@@ -149,3 +151,9 @@ static constexpr Float Infinity = std::numeric_limits<Float>::infinity();
 #ifndef PBRT_L1_CACHE_LINE_SIZE
 	#define PBRT_L1_CACHE_LINE_SIZE 64
 #endif
+
+//#ifdef PBRT_FLOAT_IS_DOUBLE
+static const Float OneMinusEpsilon = 0x1.fffffffffffffp-1;
+//#else
+//static const Float OneMinusEpsilon = 0x1.fffffep-1;
+//#endif
