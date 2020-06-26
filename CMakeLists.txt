@@ -3,7 +3,7 @@ set(ROOT "${CMAKE_CURRENT_LIST_DIR}")
 project ( pbrt )
 
 set(CMAKE_CXX_STANDARD 17)
-set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/")
 
@@ -24,5 +24,5 @@ file ( GLOB PBRT_SOURCE
 
 
 
-add_executable( pbrt src/pbrt.cpp  ${PBRT_SOURCE} "src/core/camera.cpp")
+add_executable( pbrt src/pbrt.cpp  ${PBRT_SOURCE})
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${ROOT}/lib/eigen-3.3.7/)

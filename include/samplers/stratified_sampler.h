@@ -17,6 +17,4 @@ public:
 		bool jitterSamples, int nSampledDimensions);
 	void StartPixel(const Point2i& p);
 
-
-}
 };
