@@ -60,8 +60,6 @@ protected:
 	std::vector<std::vector<Float>> samples1D;
 	std::vector<std::vector<Point2f>> samples2D;
 	int current1DDimension = 0, current2DDimension = 0;
-
-private:
 	RNG rng;
 
 public:
@@ -102,3 +100,22 @@ public:
 	Float Get1D();
 	Point2f Get2D();
 };
+
+
+// helper functions
+void StratifiedSample1D(Float* samp, int nSamples, RNG& rng, bool jitter);
+
+void StratifiedSample2D(Point2f* samp, int nx, int ny, RNG& rng, bool jitter);
+
+template <typename T>
+inline void Shuffle(T* samp, int count, int nDimensions, RNG& rng) 
+{
+	for (int i = 0; i < count; ++i) {
+		int other = i + rng.UniformUInt32(count - i);
+		for (int j = 0; j < nDimensions; ++j)
+			std::swap(samp[nDimensions * i + j],
+				samp[nDimensions * other + j]);
+	}
+}
+
+void LatinHypercube(Float* samples, int nSamples, int nDim, RNG& rng);

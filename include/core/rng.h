@@ -9,6 +9,8 @@ public:
 
 	double UniformFloat() { return 0; }
 
+	int UniformUInt32(int i) { return 0; }
+
 private:
 
 };
