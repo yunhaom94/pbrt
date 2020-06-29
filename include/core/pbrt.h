@@ -18,6 +18,7 @@
 // properties and constants
 #define PBRT_CONSTEXPR constexpr
 
+#define ALLOCA(TYPE, COUNT) (TYPE *) alloca((COUNT) * sizeof(TYPE))
 
 //  Forward Declarations
 
@@ -75,10 +76,14 @@ class TransportMode;
 
 class RNG;
 
+class Filter;
+
 
 // definitions
 // TODO: may have flag for float and double
 typedef double Float;
+// TODO: p1086
+typedef Float AtomicFloat;
 
 typedef Bounds2<Float> Bounds2f;
 typedef Bounds2<int> Bounds2i;
@@ -96,30 +101,72 @@ template <typename T>
 struct Vector2 : public Eigen::Matrix <T, 2, 1> 
 {
 	using Eigen::Matrix <T, 2, 1>::Matrix;
+
+
+	template <typename U>
+	explicit Vector2(const Vector2<U>& p)
+	{
+		this->x() = p.x();
+		this->y() = p.y();
+	}
+
 };
 
 template <typename T>
 struct Point2 : public Eigen::Matrix <T, 2, 1> 
 {
 	using Eigen::Matrix <T, 2, 1>::Matrix;
+
+	template <typename U>
+	explicit Point2(const Point2<U>& p)
+	{
+		this->x() = p.x();
+		this->y() = p.y();
+	}
+
 };
 
 template <typename T>
 struct Vector3 : public Eigen::Matrix <T, 3, 1> 
 {
 	using Eigen::Matrix <T, 3, 1>::Matrix;
+
+	template <typename U>
+	explicit Vector3(const Vector3<U>& p)
+	{
+		this->x() = p.x();
+		this->y() = p.y();
+		this->z() = p.z();
+	}
 };
 
 template <typename T>
 struct Point3 : public Eigen::Matrix <T, 3, 1> 
 {
 	using Eigen::Matrix <T, 3, 1>::Matrix;
+
+	template <typename U>
+	explicit Point3(const Point3<U>& p)
+	{
+		this->x() = p.x();
+		this->y() = p.y();
+		this->z() = p.z();
+	}
+
 };
 
 template <typename T>
 struct Normal3 : public Eigen::Matrix <T, 3, 1> 
 {
 	using Eigen::Matrix <T, 3, 1>::Matrix;
+
+	template <typename U>
+	explicit Normal3(const Normal3<U>& p)
+	{
+		this->x() = p.x();
+		this->y() = p.y();
+		this->z() = p.z();
+	}
 };
 
 typedef Vector2<int> Vector2i;

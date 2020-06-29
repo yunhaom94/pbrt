@@ -10,11 +10,30 @@ template <typename T> class Bounds2
 {
 public:
 	// vector2T
-	Eigen::Matrix< T, 2, 1> pMin, pMax;
+	Point2<T> pMin, pMax;
 
 public:
-	Bounds2() {}
-	Bounds2(const Eigen::Matrix< T, 2, 1>& p1, const Eigen::Matrix< T, 2, 1>& p2) : pMin(p1), pMax(p2) { }
+	Bounds2() 
+	{
+		T minNum = std::numeric_limits<T>::lowest();
+		T maxNum = std::numeric_limits<T>::max();
+		pMin = Point2<T>(maxNum, maxNum);
+		pMax = Point2<T>(minNum, minNum);
+	}
+	Bounds2(const Point2<T>& p1, const Point2<T>& p2)
+	{
+		pMin = Point2<T>(std::min(p1.x(), p2.x()), std::min(p1.y(), p2.y()));
+		pMax = Point2<T>(std::max(p1.x(), p2.x()), std::max(p1.y(), p2.y()));
+	}
+	explicit Bounds2(const Point2<T>& p) : pMin(p), pMax(p) {}
+
+	template <typename U>
+	explicit operator Bounds2<U>() const
+	{
+		return Bounds2<U>((Point2<U>)pMin, (Point2<U>)pMax);
+	}
+
+
 	~Bounds2() {}
 
 
@@ -23,15 +42,81 @@ public:
 		return Vector2i(0, 0);
 	}
 
+	T Area() const {
+		Vector2<T> d = pMax - pMin;
+		return (d.x() * d.y());
+	}
+
 private:
 
 };
+
+
+class Bounds2iIterator : public std::forward_iterator_tag 
+{
+public:
+	Bounds2iIterator(const Bounds2i& b, const Point2i& pt)
+		: p(pt), bounds(&b) {}
+
+	Bounds2iIterator operator++() 
+	{
+		advance();
+		return *this;
+	}
+	Bounds2iIterator operator++(int)
+	{
+		Bounds2iIterator old = *this;
+		advance();
+		return old;
+	}
+	bool operator==(const Bounds2iIterator& bi) const 
+	{
+		return p == bi.p && bounds == bi.bounds;
+	}
+	bool operator!=(const Bounds2iIterator& bi) const
+	{
+		return p != bi.p || bounds != bi.bounds;
+	}
+
+	Point2i operator*() const { return p; }
+
+private:
+	void advance()
+	{
+		++p.x();
+		if (p.x() == bounds->pMax.x()) {
+			p.x() = bounds->pMin.x();
+			++p.y();
+		}
+	}
+	Point2i p;
+	const Bounds2i* bounds;
+};
+
+inline Bounds2iIterator begin(const Bounds2i& b) 
+{
+	return Bounds2iIterator(b, b.pMin);
+}
+
+inline Bounds2iIterator end(const Bounds2i& b) 
+{
+	// Normally, the ending point is at the minimum x value and one past
+	// the last valid y value.
+	Point2i pEnd(b.pMin.x(), b.pMax.y());
+	// However, if the bounds are degenerate, override the end point to
+	// equal the start point so that any attempt to iterate over the bounds
+	// exits out immediately.
+	if (b.pMin.x() >= b.pMax.x() || b.pMin.y() >= b.pMax.y())
+		pEnd = b.pMin;
+	return Bounds2iIterator(b, pEnd);
+}
+
 
 template <typename T> class  Bounds3
 {
 public:
 	// vector3T
-	Eigen::Matrix< T, 3, 1> pMin, pMax;
+	Point3<T> pMin, pMax;
 
 
 public:
@@ -149,6 +234,19 @@ public:
 
 // utility functions of bounding boxes
 
+template <typename T>
+Point2<T> Floor(const Point2<T>& p)
+{
+	return Point2<T>(std::floor(p.x()), std::floor(p.y()));
+}
+
+template <typename T>
+Point2<T> Ceil(const Point2<T>& p) 
+{
+	return Point2<T>(std::ceil(p.x()), std::ceil(p.y()));
+}
+
+
 template <typename T> Bounds3<T> 
 Union(const Bounds3<T>& b, const Eigen::Matrix< T, 3, 1>& p)
 {
@@ -172,10 +270,22 @@ Union(const Bounds3<T>& b1, const Bounds3<T>& b2)
 											 std::max(b1.pMax.z(), b2.pMax.z())));
 }
 
+template <typename T>
+Bounds2<T> Intersect(const Bounds2<T>& b1, const Bounds2<T>& b2) {
+	// Important: assign to pMin/pMax directly and don't run the Bounds2()
+	// constructor, since it takes min/max of the points passed to it.  In
+	// turn, that breaks returning an invalid bound for the case where we
+	// intersect non-overlapping bounds (as we'd like to happen).
+	Bounds2<T> ret;
+	// TODO:
+	return ret;
+}
+
 
 template <typename T> Bounds3<T>
 Intersect(const Bounds3<T>& b1, const Bounds3<T>& b2)
 {
+	// TODO:
 	return Bounds3<T>(Eigen::Matrix<T, 3, 1>(std::max(b1.pMin.x(), b2.pMin.x()),
 											 std::max(b1.pMin.y(), b2.pMin.y()),
 											 std::max(b1.pMin.z(), b2.pMin.z())),

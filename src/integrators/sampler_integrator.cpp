@@ -4,7 +4,6 @@
 #include "core/bounding_boxes.h"
 #include "core/memory.h"
 #include "core/sampler.h"
-#include "core/filmtile.h"
 #include "core/ray.h"
 #include "core/spectrum.h"
 #include "core/interaction.h"
