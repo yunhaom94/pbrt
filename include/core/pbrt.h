@@ -78,6 +78,7 @@ class RNG;
 
 class Filter;
 
+class BxDF;
 
 // definitions
 // TODO: may have flag for float and double

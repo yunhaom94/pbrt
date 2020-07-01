@@ -82,7 +82,7 @@ void SamplerIntegrator::Render(const Scene& scene)
 	}
 
 	// output
-	camera->film->WriteImage();
+	camera->film->WriteImage(1);
 
 }
 
