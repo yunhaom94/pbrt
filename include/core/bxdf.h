@@ -225,6 +225,9 @@ public:
 
 	Spectrum f(const Vector3f& wo, const Vector3f& wi) const;
 
+	// TODO:
+	Spectrum rho(const Vector3f&, int, const Point2f*) const { return R; }
+	Spectrum rho(int, const Point2f*, const Point2f*) const { return R; }
 
 };
 
@@ -335,6 +338,7 @@ private:
 	int nBxDFs = 0;
 	static constexpr int MaxBxDFs = 8;
 	BxDF* bxdfs[MaxBxDFs];
+	friend class MixMaterial;
 
 public:
 	BSDF(const SurfaceInteraction& si, Float eta = 1)

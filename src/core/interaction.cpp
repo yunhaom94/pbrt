@@ -4,6 +4,7 @@
 #include "core/spectrum.h"
 #include "core/shape.h"
 #include "core/memory.h"
+#include "core/primitive.h"
 #include "utlis/utlis.h"
 
 Interaction::Interaction(const Point3f& p, 
@@ -90,10 +91,19 @@ void SurfaceInteraction::SetShadingGeometry(const Vector3f& dpdus,
 
 }
 
-void SurfaceInteraction::ComputeScatteringFunctions(Ray r, MemoryArena m)
+void SurfaceInteraction::ComputeDifferentials(Ray r)
 {
-	// TODO:
+	// TODO: p601
 }
+
+void SurfaceInteraction::ComputeScatteringFunctions(const RayDifferential& ray, MemoryArena& arena, bool allowMultipleLobes, TransportMode mode)
+{
+	ComputeDifferentials(ray);
+	primitive->ComputeScatteringFunctions(this, arena, mode,
+		allowMultipleLobes);
+}
+
+
 
 Spectrum SurfaceInteraction::Le(Vector3f wo)
 {

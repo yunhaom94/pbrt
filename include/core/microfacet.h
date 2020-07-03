@@ -58,6 +58,8 @@ public:
 	TrowbridgeReitzDistribution(Float alphax, Float alphay)
 		: alphax(alphax), alphay(alphay) {}
 
+	static inline Float RoughnessToAlpha(Float roughness) { return 0; }// TODO:
+
 	Float D(const Vector3f& wh) const;
 	Float Lambda(const Vector3f& w) const;
 };

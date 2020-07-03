@@ -300,12 +300,29 @@ Spectrum BSDF::rho(int nSamples, const Point2f* samples1, const Point2f* samples
 	return ret;
 }
 
-Spectrum BSDF::rho(const Vector3f& wo, int nSamples, const Point2f* samples, BxDFType flags) const
+Spectrum BSDF::rho(const Vector3f& wov, int nSamples, const Point2f* samples, BxDFType flags) const
 {
-	Vector3f wo = WorldToLocal(wo);
+	Vector3f wo = WorldToLocal(wov);
 	Spectrum ret(0.f);
 	for (int i = 0; i < nBxDFs; ++i)
 		if (bxdfs[i]->MatchesFlags(flags))
 			ret += bxdfs[i]->rho(wo, nSamples, samples);
 	return ret;
+}
+
+
+// TODO: VVVV
+Spectrum BxDF::Sample_f(const Vector3f& wo, Vector3f* wi, const Point2f& sample, Float* pdf, BxDFType* sampledType) const
+{
+	return Spectrum();
+}
+
+Spectrum BxDF::rho(const Vector3f& wo, int nSamples, const Point2f* samples) const
+{
+	return Spectrum();
+}
+
+Spectrum BxDF::rho(int nSamples, const Point2f* samples1, const Point2f* samples2) const
+{
+	return Spectrum();
 }

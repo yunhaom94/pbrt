@@ -2,6 +2,7 @@
 
 #include "core/pbrt.h"
 #include "core/medium_interface.h"
+#include "core/transport_mode.h"
 
 struct Interaction
 {
@@ -59,6 +60,8 @@ public:
 		Normal3f dndu, dndv;
 	} shading;
 
+	mutable Float dudx = 0, dvdx = 0, dudy = 0, dvdy = 0;
+
 public:
 
 	SurfaceInteraction() {}
@@ -80,7 +83,12 @@ public:
 	void SetShadingGeometry(const Vector3f& dpdus, const Vector3f& dpdvs,
 		const Normal3f& dndus, const Normal3f& dndvs, bool orientationIsAuthoritative);
 
-	void ComputeScatteringFunctions(Ray r, MemoryArena m);
+	void ComputeDifferentials(Ray r);
+
+	void ComputeScatteringFunctions(const RayDifferential& ray, 
+		MemoryArena& arena,
+		bool allowMultipleLobes = false,
+		TransportMode mode = TransportMode::Radiance);
 	
 	Spectrum Le(Vector3f wo);
 

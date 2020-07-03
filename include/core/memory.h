@@ -15,8 +15,11 @@ public:
 
 	void Reset() {}
 
-	template <class T>
-	T* Alloc() { return nullptr; }
+
+	template <typename T>
+	T* Alloc(size_t size = 1) { return nullptr; }
+
+	void *Alloc(size_t size = 1) { return nullptr; }
 
 private:
 
