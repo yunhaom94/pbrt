@@ -284,3 +284,30 @@ inline Float Erf(Float x)
 }
 
 
+inline bool CatmullRomWeights(int size, const Float* nodes, Float x,
+	int* offset, Float* weights) {
+	if (!(x >= nodes[0] && x <= nodes[size - 1]))
+		return false;
+	
+	int idx = FindInterval(size, [&](int i) { return nodes[i] <= x; });
+	*offset = idx - 1;
+	Float x0 = nodes[idx], x1 = nodes[idx + 1];
+	
+	Float t = (x - x0) / (x1 - x0), t2 = t * t, t3 = t2 * t;
+	weights[1] = 2 * t3 - 3 * t2 + 1;
+	weights[2] = -2 * t3 + 3 * t2;
+
+	if (idx > 0) {
+		Float w0 = (t3 - 2 * t2 + t) * (x1 - x0) / (x1 - nodes[idx - 1]);
+		weights[0] = -w0;
+		weights[2] += w0;
+	}
+	else {
+		Float w0 = t3 - 2 * t2 + t;
+		weights[0] = 0;
+		weights[1] -= w0;
+		weights[2] += w0;
+	}
+	
+	return true;
+}

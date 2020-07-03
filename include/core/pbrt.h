@@ -67,18 +67,25 @@ class Camera;
 
 class MemoryArena;
 
+class BxDF;
 class BSDF;
 class BSSRDF;
 
+class MicrofacetDistribution;
+class BeckmannDistribution;
+class TrowbridgeReitzDistribution;
+
 class Material;
 
-class TransportMode;
+enum class TransportMode;
 
 class RNG;
 
 class Filter;
 
-class BxDF;
+
+
+
 
 // definitions
 // TODO: may have flag for float and double

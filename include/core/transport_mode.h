@@ -1,12 +1,5 @@
+// TODO: p960
 #pragma once
+#include "core/pbrt.h"
 
-class TransportMode
-{
-public:
-	TransportMode() {}
-	~TransportMode() {}
-
-private:
-
-};
-
+enum class TransportMode { Radiance, Importance };
