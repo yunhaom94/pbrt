@@ -1,6 +1,13 @@
 #pragma once
 
 #include "core/pbrt.h"
+#include "core/bxdf.h"
+#include "core/interaction.h"
+#include "utlis/utlis.h"
+
+
+
+
 
 class Material
 {

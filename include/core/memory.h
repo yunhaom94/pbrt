@@ -24,7 +24,9 @@ private:
 
 // Memory Declarations
 #define ARENA_ALLOC(arena, Type) new ((arena).Alloc(sizeof(Type))) Type
+
 void* AllocAligned(size_t size);
+
 template <typename T>
 T* AllocAligned(size_t count)
 {

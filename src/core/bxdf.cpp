@@ -271,3 +271,41 @@ Spectrum FourierBSDF::f(const Vector3f& wo, const Vector3f& wi) const
 			return Spectrum::FromRGB(rgb).Clamp();
 		}
 }
+
+Spectrum BSDF::f(const Vector3f& woW, const Vector3f& wiW,
+	BxDFType flags) const {
+	Vector3f wi = WorldToLocal(wiW), wo = WorldToLocal(woW);
+	bool reflect = wiW.dot(ng) * woW.dot(ng) > 0;
+	Spectrum f(0.f);
+	for (int i = 0; i < nBxDFs; ++i)
+		if (bxdfs[i]->MatchesFlags(flags) &&
+			((reflect && (bxdfs[i]->type & BSDF_REFLECTION)) ||
+				(!reflect && (bxdfs[i]->type & BSDF_TRANSMISSION))))
+			f += bxdfs[i]->f(wo, wi);
+	return f;
+}
+
+Spectrum BSDF::Sample_f(const Vector3f& wo, Vector3f* wi, const Point2f& u, Float* pdf, BxDFType* sampledType) const
+{
+	// TODO:
+	return Spectrum();
+}
+
+Spectrum BSDF::rho(int nSamples, const Point2f* samples1, const Point2f* samples2, BxDFType flags) const
+{
+	Spectrum ret(0.f);
+	for (int i = 0; i < nBxDFs; ++i)
+		if (bxdfs[i]->MatchesFlags(flags))
+			ret += bxdfs[i]->rho(nSamples, samples1, samples2);
+	return ret;
+}
+
+Spectrum BSDF::rho(const Vector3f& wo, int nSamples, const Point2f* samples, BxDFType flags) const
+{
+	Vector3f wo = WorldToLocal(wo);
+	Spectrum ret(0.f);
+	for (int i = 0; i < nBxDFs; ++i)
+		if (bxdfs[i]->MatchesFlags(flags))
+			ret += bxdfs[i]->rho(wo, nSamples, samples);
+	return ret;
+}

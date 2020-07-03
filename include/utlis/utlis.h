@@ -311,3 +311,5 @@ inline bool CatmullRomWeights(int size, const Float* nodes, Float x,
 	
 	return true;
 }
+
+#define Assert(c) assert(c);

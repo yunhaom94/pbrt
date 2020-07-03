@@ -2,21 +2,6 @@
 
 #include "core/pbrt.h"
 #include "core/medium_interface.h"
-#include "core/bxdf.h"
-// TODO: move extra .h
-class BSDF // TODO: remove this
-{
-
-public:
-	BSDF() {}
-	~BSDF() {}
-
-	virtual Spectrum f(Vector3f wo, Vector3f wi);
-	virtual Spectrum Sample_f(Vector3f wo, Vector3f *wi, Point2f sample, Float *pdf, BxDFType type);
-
-private:
-
-};
 
 struct Interaction
 {
@@ -78,7 +63,7 @@ public:
 
 	SurfaceInteraction() {}
 
-	SurfaceInteraction::SurfaceInteraction(const Point3f& p,
+	SurfaceInteraction(const Point3f& p,
 		const Vector3f& pError,
 		const Point2f& uv,
 		const Vector3f& wo,
