@@ -79,3 +79,4 @@ bool InsideExclusive(const Point2<T>& pt, const Bounds2<T>& b)
 	return (pt.x() >= b.pMin.x() && pt.x() < b.pMax.x() && pt.y() >= b.pMin.y() &&
 		pt.y() < b.pMax.y());
 }
+

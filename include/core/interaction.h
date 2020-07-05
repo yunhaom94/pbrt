@@ -60,6 +60,7 @@ public:
 		Normal3f dndu, dndv;
 	} shading;
 
+	mutable Vector3f dpdx, dpdy;
 	mutable Float dudx = 0, dvdx = 0, dudy = 0, dvdy = 0;
 
 public:
@@ -83,7 +84,7 @@ public:
 	void SetShadingGeometry(const Vector3f& dpdus, const Vector3f& dpdvs,
 		const Normal3f& dndus, const Normal3f& dndvs, bool orientationIsAuthoritative);
 
-	void ComputeDifferentials(Ray r);
+	void ComputeDifferentials(const RayDifferential& ray) const;
 
 	void ComputeScatteringFunctions(const RayDifferential& ray, 
 		MemoryArena& arena,
