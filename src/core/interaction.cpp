@@ -5,7 +5,10 @@
 #include "core/shape.h"
 #include "core/memory.h"
 #include "core/primitive.h"
+#include "core/light.h"
 #include "utlis/utlis.h"
+#include "utlis/geometry.h"
+
 
 Interaction::Interaction(const Point3f& p,
 	const Normal3f& n,
@@ -20,10 +23,33 @@ Interaction::Interaction(const Point3f& p,
 	n(n),
 	mediumInterface(mediumInterface) { }
 
+Interaction::Interaction(const Point3f& p, Float time,
+	const MediumInterface& mediumInterface)
+	: p(p), time(time), mediumInterface(mediumInterface) {}
 
 bool Interaction::IsSurfaceInteraction() const
 {
 	return surfaceInteraction;
+}
+
+const Medium* Interaction::GetMedium(const Vector3f& w) const
+{
+	// TODO: p688
+	return nullptr;
+}
+
+Ray Interaction::SpawnRay(const Vector3f& d) const
+{
+	Point3f o = OffsetRayOrigin(p, pError, n, d);
+	return Ray(o, d, Infinity, time, GetMedium(d));
+}
+
+Ray Interaction::SpawnRayTo(const Interaction& it) const
+{
+	Point3f origin = OffsetRayOrigin(p, pError, n, it.p - p);
+	Point3f target = OffsetRayOrigin(it.p, it.pError, it.n, origin - it.p);
+	Vector3f d = target - origin;
+	return Ray(origin, d, 1 - ShadowEpsilon, time, GetMedium(d));
 }
 
 SurfaceInteraction::SurfaceInteraction(const Point3f& p,
@@ -146,8 +172,10 @@ void SurfaceInteraction::ComputeScatteringFunctions(const RayDifferential& ray, 
 
 
 
-Spectrum SurfaceInteraction::Le(Vector3f wo)
+
+
+Spectrum SurfaceInteraction::Le(const Vector3f& w) const
 {
-	// TODO:
-	return Spectrum();
+	const AreaLight* area = primitive->GetAreaLight();
+	return area ? area->L(*this, w) : Spectrum(0.f);
 }

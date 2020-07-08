@@ -34,7 +34,15 @@ struct Interaction
 		Float time,
 		const MediumInterface mediumInterface);
 
+	Interaction(const Point3f& p, Float time, const MediumInterface& mediumInterface);
+
 	bool IsSurfaceInteraction() const;
+
+	const Medium* GetMedium(const Vector3f& w) const;
+
+	Ray SpawnRay(const Vector3f& d) const;
+
+	Ray SpawnRayTo(const Interaction& it) const;
 
 };
 
@@ -91,7 +99,8 @@ public:
 		bool allowMultipleLobes = false,
 		TransportMode mode = TransportMode::Radiance);
 	
-	Spectrum Le(Vector3f wo);
+
+	Spectrum Le(const Vector3f& w) const;
 
 
 

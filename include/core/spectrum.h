@@ -19,6 +19,11 @@ inline void RGBToXYZ(const Float rgb[3], Float xyz[3])
 	xyz[2] = 0.019334 * rgb[0] + 0.119193 * rgb[1] + 0.950227 * rgb[2];
 }
 
+void Blackbody(const Float* lambda, int n, Float T, Float* Le);
+
+void BlackbodyNormalized(const Float* lambda, int n, Float T,
+	Float* Le);
+
 template <int nSpectrumSamples> 
 class CoefficientSpectrum
 {

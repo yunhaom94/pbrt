@@ -3,7 +3,7 @@
 #include "core/interaction.h"
 #include "core/scene.h"
 #include "core/ray.h"
-#include "core/visibility_tester.h"
+#include "core/light.h"
 #include "core/sampler.h"
 #include "core/memory.h"
 #include "core/bxdf.h"
