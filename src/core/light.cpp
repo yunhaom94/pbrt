@@ -8,7 +8,7 @@
 Light::Light(int flags, 
 	const Transform& LightToWorld,
 	const MediumInterface& mediumInterface,
-	int nSamples = 1)
+	int nSamples)
 	: flags(flags),
 	nSamples(std::max(1, nSamples)),
 	mediumInterface(mediumInterface),

@@ -133,7 +133,7 @@ Point2f ConcentricSampleDisk(const Point2f& u)
 		theta = PiOver4 * (uOffset.y() / uOffset.x());
 	}
 	else {
-		r = uOffset.y;
+		r = uOffset.y();
 		theta = PiOver2 - PiOver4 * (uOffset.x() / uOffset.y());
 	}
 	return r * Point2f(std::cos(theta), std::sin(theta));

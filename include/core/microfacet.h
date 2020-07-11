@@ -6,8 +6,10 @@
 // faces distributions
 class MicrofacetDistribution
 {
+protected:
+	const bool sampleVisibleArea;
+
 public:
-	MicrofacetDistribution() {}
 	~MicrofacetDistribution() {}
 
 
@@ -28,7 +30,16 @@ public:
 		return 1 / (1 + Lambda(wo) + Lambda(wi));
 	}
 
+	virtual Vector3f Sample_wh(const Vector3f& wo,
+		const Point2f& u) const = 0;
+
+	Float Pdf(const Vector3f& wo, const Vector3f& wh) const;
+
 protected:
+	MicrofacetDistribution(bool sampleVisibleArea);
+
+
+		
 
 };
 
@@ -45,6 +56,8 @@ public:
 
 	Float Lambda(const Vector3f& w) const;
 
+	Vector3f Sample_wh(const Vector3f& wo,
+		const Point2f& u) const;
 	
 };
 

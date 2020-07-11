@@ -79,19 +79,20 @@ public:
 	// (defused)
 	virtual Spectrum f(const Vector3f& wo, const Vector3f& wi) const = 0;
 
+	Float Pdf(const Vector3f& wo, const Vector3f& wi) const;
+
 	// with only one direction (specular)
-	virtual Spectrum Sample_f(const Vector3f& wo, Vector3f* wi,
-		const Point2f& sample, Float* pdf,
-		BxDFType* sampledType = nullptr) const;
+	Spectrum Sample_f(const Vector3f& wo, Vector3f* wi,
+		const Point2f& u, Float* pdf, BxDFType* sampledType = nullptr) const;
 
 	// hemispherical-directional reflectance function
-	virtual Spectrum rho(const Vector3f& wo, int nSamples,
-		const Point2f* samples) const;
+	virtual Spectrum rho(const Vector3f& w, int nSamples,
+		const Point2f* u) const;
 
 	// compute hemispherical-hemispherical reflectance of a surface when 
 	// no w0 given
-	virtual Spectrum rho(int nSamples, const Point2f* samples1,
-		const Point2f* samples2) const;
+	virtual Spectrum rho(int nSamples, const Point2f* u1,
+		const Point2f* u2) const;
 
 private:
 
@@ -144,6 +145,12 @@ public:
 	Spectrum Sample_f(const Vector3f& wo,
 		Vector3f* wi, const Point2f& sample, Float* pdf,
 		BxDFType* sampledType) const;
+
+	Float Pdf(const Vector3f& wo, const Vector3f& wi) const 
+	{
+		return 0;
+	}
+
 };
 
 
@@ -167,6 +174,11 @@ public:
 	Spectrum Sample_f(const Vector3f& wo,
 		Vector3f* wi, const Point2f& sample, Float* pdf,
 		BxDFType* sampledType) const;
+
+	Float Pdf(const Vector3f& wo, const Vector3f& wi) const
+	{
+		return 0;
+	}
 };
 
 class FresnelSpecular : public BxDF 
@@ -185,6 +197,10 @@ public:
 		mode(mode) { }
 
 	Spectrum f(const Vector3f& wo, const Vector3f& wi) const;
+
+	Spectrum Sample_f(const Vector3f& wo,
+		Vector3f* wi, const Point2f& u, Float* pdf,
+		BxDFType* sampledType) const;
 };
 
 // non-accurate reflection model
@@ -248,6 +264,11 @@ public:
 
 	Spectrum f(const Vector3f& wo, const Vector3f& wi) const;
 
+	Float Pdf(const Vector3f& wo, const Vector3f& wi) const;
+
+	Spectrum Sample_f(const Vector3f& wo, Vector3f* wi,
+		const Point2f& u, Float* pdf, BxDFType* sampledType) const;
+
 };
 
 class MicrofacetTransmission : public BxDF 
@@ -268,6 +289,12 @@ public:
 		fresnel(etaA, etaB), mode(mode) { }
 
 	Spectrum f(const Vector3f& wo, const Vector3f& wi) const;
+
+	Spectrum Sample_f(const Vector3f& wo,
+		Vector3f* wi, const Point2f& u, Float* pdf,
+		BxDFType* sampledType) const;
+
+	Float Pdf(const Vector3f& wo, const Vector3f& wi) const;
 };
 
 
@@ -284,11 +311,18 @@ public:
 		: BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)),
 		Rd(Rd), Rs(Rs), distribution(distribution) { }
 
-	Spectrum SchlickFresnel(Float cosTheta) const {
+	Spectrum SchlickFresnel(Float cosTheta) const 
+	{
 		auto pow5 = [](Float v) { return (v * v) * (v * v) * v; };
 		return Rs + pow5(1 - cosTheta) * (Spectrum(1.) - Rs);
 	}
+
 	Spectrum f(const Vector3f& wo, const Vector3f& wi) const;
+
+	Spectrum Sample_f(const Vector3f& wo, Vector3f* wi,
+		const Point2f& uOrig, Float* pdf, BxDFType* sampledType) const;
+
+	Float Pdf(const Vector3f& wo, const Vector3f& wi) const;
 };
 
 
@@ -369,11 +403,15 @@ public:
 
 	Spectrum f(const Vector3f& woW, const Vector3f& wiW, BxDFType flags = BSDF_ALL) const;
 
-	Spectrum Sample_f(const Vector3f& wo, Vector3f* wi, const Point2f& u,
-		Float* pdf, BxDFType* sampledType) const;
+	Float Pdf(const Vector3f& wo, const Vector3f& wi,
+		BxDFType flags = BSDF_ALL) const;
+
+	Spectrum Sample_f(const Vector3f& woWorld, Vector3f* wiWorld,
+		const Point2f& u, Float* pdf, BxDFType type = BSDF_ALL, BxDFType* sampledType = nullptr) const;
 
 	Spectrum rho(int nSamples, const Point2f* samples1,
 		const Point2f* samples2, BxDFType flags = BSDF_ALL) const;
+
 	Spectrum rho(const Vector3f& wo, int nSamples, const Point2f* samples,
 		BxDFType flags = BSDF_ALL) const;
 

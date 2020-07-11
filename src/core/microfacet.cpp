@@ -1,4 +1,17 @@
 #include "core/microfacet.h"
+#include "utlis/geometry.h"
+
+MicrofacetDistribution::MicrofacetDistribution(bool sampleVisibleArea)
+	: sampleVisibleArea(sampleVisibleArea) { }
+
+Float MicrofacetDistribution::Pdf(const Vector3f& wo,
+	const Vector3f& wh) const 
+{
+	if (sampleVisibleArea)
+		return D(wh) * G1(wo) * std::abs(wo.dot(wh)) / AbsCosTheta(wo);
+	else
+		return D(wh) * AbsCosTheta(wh);
+}
 
 Float BeckmannDistribution::D(const Vector3f& wh) const
 {
@@ -29,6 +42,53 @@ Float BeckmannDistribution::Lambda(const Vector3f& w) const {
 		(3.535f * a + 2.181f * a * a);
 }
 
+Vector3f BeckmannDistribution::Sample_wh(const Vector3f& wo, const Point2f& u) const
+{
+	if (!sampleVisibleArea)
+	{
+		Float tan2Theta, phi;
+		if (alphax == alphay)
+		{
+			Float logSample = std::log(u[0]);
+			if (std::isinf(logSample)) 
+				logSample = 0;
+
+			tan2Theta = -alphax * alphax * logSample;
+			phi = u[1] * 2 * Pi;
+		}
+		else
+		{
+			Float logSample = std::log(1 - u[0]);
+
+			phi = std::atan(alphay / alphax *
+				std::tan(2 * Pi * u[1] + 0.5f * Pi));
+			if (u[1] > 0.5f)
+				phi += Pi;
+
+			Float sinPhi = std::sin(phi), cosPhi = std::cos(phi);
+			Float alphax2 = alphax * alphax, alphay2 = alphay * alphay;
+			tan2Theta = -logSample /
+				(cosPhi * cosPhi / alphax2 + sinPhi * sinPhi / alphay2);
+		}
+		Float cosTheta = 1 / std::sqrt(1 + tan2Theta);
+		Float sinTheta = std::sqrt(std::max((Float)0, 1 - cosTheta * cosTheta));
+		Vector3f wh = SphericalDirection(sinTheta, cosTheta, phi);
+		if (!SameHemisphere(wo, wh)) wh = -wh;
+			return wh;
+	}
+	else 
+	{
+		// Sample visible area of normals for Beckmann distribution
+		Vector3f wh;
+		bool flip = wo.z() < 0;
+		// TODO:
+		//wh = BeckmannSample(flip ? -wo : wo, alphax, alphay, u[0], u[1]);
+		if (flip) 
+			wh = -wh;
+		return wh;
+	}
+}
+
 
 Float TrowbridgeReitzDistribution::D(const Vector3f& wh) const
 {
@@ -54,3 +114,4 @@ Float TrowbridgeReitzDistribution::Lambda(const Vector3f & w) const
 	Float alpha2Tan2Theta = (alpha * absTanTheta) * (alpha * absTanTheta);
 	return (-1 + std::sqrt(1.f + alpha2Tan2Theta)) / 2;
 }
+

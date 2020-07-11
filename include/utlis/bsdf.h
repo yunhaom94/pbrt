@@ -73,10 +73,8 @@ inline bool Refract(const Vector3f& wi, const Normal3f& n, Float eta,
 	return true;
 }
 
-inline bool SameHemisphere(const Vector3f& w, const Vector3f& wp) {
+inline bool SameHemisphere(const Vector3f& w, const Vector3f& wp) 
+{
 	return w.z() * wp.z() > 0;
 }
 
-inline bool SameHemisphere(const Vector3f& w, const Normal3f& wp) {
-	return w.z() * wp.z() > 0;
-}
