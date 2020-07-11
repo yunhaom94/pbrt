@@ -2,6 +2,7 @@
 
 #include "core/pbrt.h"
 #include "core/ray.h"
+#include "utlis/geometry.h"
 
 // DO NOT FORMAT THIS DOCUMENT IN VS
 

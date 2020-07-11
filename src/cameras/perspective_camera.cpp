@@ -1,6 +1,7 @@
 #pragma once
 #include "cameras/perspective_camera.h"
 #include "core/ray.h"
+#include "core/sampling.h"
 
 PerspectiveCamera::PerspectiveCamera(
 	const AnimatedTransform& CameraToWorld,

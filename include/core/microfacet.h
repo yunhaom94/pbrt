@@ -10,6 +10,7 @@ protected:
 	const bool sampleVisibleArea;
 
 public:
+
 	~MicrofacetDistribution() {}
 
 
@@ -38,9 +39,6 @@ public:
 protected:
 	MicrofacetDistribution(bool sampleVisibleArea);
 
-
-		
-
 };
 
 class BeckmannDistribution : public MicrofacetDistribution 
@@ -49,8 +47,8 @@ private:
 	const Float alphax, alphay;
 
 public:
-	BeckmannDistribution(Float alphax, Float alphay)
-		: alphax(alphax), alphay(alphay) {}
+	BeckmannDistribution(Float alphax, Float alphay, bool samplevis = true)
+		: MicrofacetDistribution(samplevis), alphax(alphax), alphay(alphay) {}
 
 	Float D(const Vector3f& wh) const;
 
@@ -68,11 +66,14 @@ private:
 	const Float alphax, alphay;
 
 public:
-	TrowbridgeReitzDistribution(Float alphax, Float alphay)
-		: alphax(alphax), alphay(alphay) {}
+	TrowbridgeReitzDistribution(Float alphax, Float alphay, bool samplevis = true)
+		: MicrofacetDistribution(samplevis), alphax(alphax), alphay(alphay) {}
 
 	static inline Float RoughnessToAlpha(Float roughness) { return 0; }// TODO:
 
 	Float D(const Vector3f& wh) const;
 	Float Lambda(const Vector3f& w) const;
+
+	virtual Vector3f Sample_wh(const Vector3f& wo,
+		const Point2f& u) const;
 };

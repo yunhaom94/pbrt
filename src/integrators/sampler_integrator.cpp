@@ -100,7 +100,7 @@ Spectrum SamplerIntegrator::SpecularReflect(const RayDifferential& ray,
 	// set type to relection for sampler
 	BxDFType type = BxDFType(BSDF_REFLECTION | BSDF_SPECULAR);
 	// Given wo, compute specular reflection direction wi and BSDF value
-	Spectrum f = isect.bsdf->Sample_f(wo, &wi, sampler.Get2D(), &pdf, &type);
+	Spectrum f = isect.bsdf->Sample_f(wo, &wi, sampler.Get2D(), &pdf, type);
 
 	const Normal3f& ns = isect.shading.n;
 	if (pdf > 0 && !f.IsBlack() && std::abs(wi.dot(ns)) != 0) 
@@ -129,7 +129,7 @@ Spectrum SamplerIntegrator::SpecularTransmit(const RayDifferential& ray,
 	// set type to relection for sampler
 	BxDFType type = BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR);
 	// Given wo, compute specular reflection direction wi and BSDF value
-	Spectrum f = isect.bsdf->Sample_f(wo, &wi, sampler.Get2D(), &pdf, &type);
+	Spectrum f = isect.bsdf->Sample_f(wo, &wi, sampler.Get2D(), &pdf, type);
 
 	const Normal3f& ns = isect.shading.n;
 	if (pdf > 0 && !f.IsBlack() && std::abs(wi.dot(ns)) != 0)

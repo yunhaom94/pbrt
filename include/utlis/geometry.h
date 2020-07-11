@@ -81,7 +81,8 @@ bool InsideExclusive(const Point2<T>& pt, const Bounds2<T>& b)
 }
 
 inline Point3f OffsetRayOrigin(const Point3f& p, const Vector3f& pError,
-	const Normal3f& n, const Vector3f& w) {
+	const Normal3f& n, const Vector3f& w) 
+{
 	Float d = n.cwiseAbs().dot(pError);
 	Vector3f offset = d * Vector3f(n);
 	if (w.dot(n) < 0) offset = -offset;
@@ -94,4 +95,25 @@ inline Point3f OffsetRayOrigin(const Point3f& p, const Vector3f& pError,
 			po[i] = NextFloatDown(po[i]);
 	}
 	return po;
+}
+
+template <typename T, typename U>
+inline Float DistanceSquared(const Point3<T>& p, const Bounds3<U>& b) {
+	Float dx = std::max({ Float(0), b.pMin.x() - p.x(), p.x() - b.pMax.x() });
+	Float dy = std::max({ Float(0), b.pMin.y() - p.y(), p.y() - b.pMax.y() });
+	Float dz = std::max({ Float(0), b.pMin.z() - p.z(), p.z() - b.pMax.z() });
+	return dx * dx + dy * dy + dz * dz;
+}
+
+template <typename T, typename U>
+inline Float Distance(const Point3<T>& p, const Bounds3<U>& b)
+{
+	return std::sqrt(DistanceSquared(p, b));
+}
+
+template <typename T>
+inline Float Distance(const Point3<T>& p1, const Point3<T>& p2)
+{
+
+	return std::sqrt((p1 - p2).squaredNorm());
 }

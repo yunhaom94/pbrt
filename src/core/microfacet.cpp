@@ -115,3 +115,9 @@ Float TrowbridgeReitzDistribution::Lambda(const Vector3f & w) const
 	return (-1 + std::sqrt(1.f + alpha2Tan2Theta)) / 2;
 }
 
+Vector3f TrowbridgeReitzDistribution::Sample_wh(const Vector3f& wo, const Point2f& u) const
+{
+	// TODO:
+	return Vector3f();
+}
+

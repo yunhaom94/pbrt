@@ -1,6 +1,7 @@
 #include "cameras/orthographic_camera.h"
 #include "core/film.h"
 #include "core/ray.h"
+#include "core/sampling.h"
 
 OrthographicCamera::OrthographicCamera(const AnimatedTransform& CameraToWorld,
 	const Bounds2f& screenWindow, Float shutterOpen,
