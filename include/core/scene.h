@@ -36,6 +36,8 @@ public:
 	// only check if there is interaction, used for shadow rays
 	bool IntersectP(const Ray& ray) const;
 
+	bool IntersectTr(Ray ray, Sampler& sampler, SurfaceInteraction* isect,
+		Spectrum* transmittance) const;
 
 private:
 

@@ -29,7 +29,7 @@ public:
 	
 	virtual void Preprocess(const Scene& scene) {}
 	
-	Spectrum Le(Ray r) { return Spectrum(0.0); }
+	Spectrum Le(Ray r) const { return Spectrum(0.0); }
 
 	virtual Spectrum Sample_Li(const Interaction& ref, const Point2f& u,
 		Vector3f* wi, Float* pdf, VisibilityTester* vis) const = 0;
@@ -38,6 +38,8 @@ public:
 
 	virtual Float Pdf_Li(const Interaction& ref,
 		const Vector3f& wi) const = 0;
+
+
 
 private:
 
@@ -76,3 +78,8 @@ public:
 		Sampler& sampler) const;
 
 };
+
+inline bool IsDeltaLight(int flags) {
+	return flags & (int)LightFlags::DeltaPosition ||
+		flags & (int)LightFlags::DeltaDirection;
+}
