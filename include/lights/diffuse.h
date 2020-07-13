@@ -15,4 +15,10 @@ public:
 
 	Spectrum Power() const;
 
+	Spectrum Sample_Li(const Interaction& ref,
+		const Point2f& u, Vector3f* wi, Float* pdf,
+		VisibilityTester* vis) const;
+
+	Float Pdf_Li(const Interaction& ref,
+		const Vector3f& wi) const;
 };

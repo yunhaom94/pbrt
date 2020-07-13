@@ -14,5 +14,7 @@ public:
 
 	Spectrum Power() const;
 
+	Float Pdf_Li(const Interaction&, const Vector3f&) const;
+
 	
 };

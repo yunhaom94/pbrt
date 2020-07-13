@@ -77,3 +77,8 @@ inline Float PowerHeuristic(int nf, Float fPdf, int ng, Float gPdf)
 	Float f = nf * fPdf, g = ng * gPdf;
 	return (f * f) / (f * f + g * g);
 }
+
+
+Vector3f UniformSampleSphere(const Point2f& u);
+
+Float UniformSpherePdf();

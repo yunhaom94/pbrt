@@ -21,6 +21,8 @@ public:
 		Float zMax,
 		Float phiMax);
 
+	~Sphere() {}
+
 	// return an bounding box around the shpere
 	Bounds3f ObjectBound() const;
 
@@ -35,7 +37,11 @@ public:
 
 	double Area() const;
 
-	~Sphere() {}
+	Interaction Sphere::Sample(const Point2f& u) const;
+
+	Interaction Sample(const Interaction& ref, const Point2f& u) const;
+
+	Float Pdf(const Interaction& ref, const Vector3f& wi) const;
 
 private:
 

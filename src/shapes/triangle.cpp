@@ -2,6 +2,7 @@
 #include "core/transform.h"
 #include "core/bounding_boxes.h"
 #include "core/interaction.h"
+#include "core/sampling.h"
 #include "utlis/geometry.h"
 
 
@@ -221,6 +222,30 @@ double Triangle::Area() const
 
     return 0.5 * std::sqrt((p1 - p0).cross(p2 - p0).squaredNorm());
 
+}
+
+Interaction Triangle::Sample(const Point2f& u) const
+{
+    Point2f b = UniformSampleTriangle(u);
+
+    const Point3f& p0 = mesh->p[v[0]];
+    const Point3f& p1 = mesh->p[v[1]];
+    const Point3f& p2 = mesh->p[v[2]];
+    Interaction it;
+
+    it.p = b[0] * p0 + b[1] * p1 + (1 - b[0] - b[1]) * p2;
+    if (mesh->n)
+        it.n = (b[0] * mesh->n[v[0]] +
+            b[1] * mesh->n[v[1]] +
+            (1 - b[0] - b[1]) * mesh->n[v[2]]).normalized();
+    else
+        it.n = Normal3f(p1 - p0.cross(p2 - p0)).normalized();
+
+    if (reverseOrientation) it.n *= -1;
+    
+    Point3f pAbsSum = (b[0] * p0).cwiseAbs() + (b[1] * p1).cwiseAbs() +((1 - b[0] - b[1]) * p2).cwiseAbs();
+    it.pError = gamma(6) * Vector3f(pAbsSum);
+    return it;
 }
 
 

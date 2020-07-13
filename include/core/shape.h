@@ -47,6 +47,15 @@ public:
 	// surface area
 	virtual Float Area() const = 0;
 
+	// Used for sampling
+	virtual Interaction Sample(const Point2f& u) const = 0;
 
+	virtual Interaction Sample(const Interaction& ref,
+		const Point2f& u) const;
+
+	virtual Float Pdf(const Interaction&) const;
+
+	Float Pdf(const Interaction& ref,
+		const Vector3f& wi) const;
 };
 

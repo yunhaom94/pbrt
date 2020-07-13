@@ -36,6 +36,9 @@ public:
 
 	virtual Spectrum Power() const = 0;
 
+	virtual Float Pdf_Li(const Interaction& ref,
+		const Vector3f& wi) const = 0;
+
 private:
 
 };

@@ -91,6 +91,8 @@ public:
 
 	double Area() const;
 
+	Interaction Triangle::Sample(const Point2f& u) const;
+
 private:
 
 };
