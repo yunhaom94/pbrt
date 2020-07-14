@@ -86,7 +86,7 @@ public:
 		return ret;
 	}
 
-	CoefficientSpectrum& operator/=(const CoefficientSpectrum& s2) const
+	CoefficientSpectrum& operator/=(const CoefficientSpectrum& s2)
 	{
 		for (int i = 0; i < nSpectrumSamples; ++i)
 			c[i] /= s2.c[i];

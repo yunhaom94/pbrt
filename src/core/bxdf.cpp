@@ -1,6 +1,7 @@
 #include "core/bxdf.h"
 #include "core/microfacet.h"
 #include "core/sampling.h"
+#include "core/memory.h"
 
 Float BxDF::Pdf(const Vector3f& wo, const Vector3f& wi) const
 {

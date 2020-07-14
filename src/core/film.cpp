@@ -1,4 +1,5 @@
 #include "core/film.h"
+#include "core/memory.h"
 #include "utlis/geometry.h"
 
 

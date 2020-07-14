@@ -32,7 +32,6 @@ BVHAccel::BVHAccel(const std::vector<std::shared_ptr<Primitive>>& p,
 
 }
 
-BVHAccel::~BVHAccel() { }// TODO:FreeAligned(nodes); 
 
 BVHBuildNode* BVHAccel::recursiveBuild(MemoryArena& arena, std::vector<BVHPrimitiveInfo>& primitiveInfo,
 	int start, int end, int* totalNodes,

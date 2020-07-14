@@ -1,6 +1,11 @@
 // flags
 #pragma once
 #define _USE_MATH_DEFINES
+#define PBRT_IS_WINDOWS
+
+#ifndef PBRT_L1_CACHE_LINE_SIZE
+#define PBRT_L1_CACHE_LINE_SIZE 64
+#endif
 
 // includes
 // std libs
@@ -18,7 +23,6 @@
 // properties and constants
 #define PBRT_CONSTEXPR constexpr
 
-#define ALLOCA(TYPE, COUNT) (TYPE *) alloca((COUNT) * sizeof(TYPE))
 
 //  Forward Declarations
 
@@ -82,9 +86,6 @@ enum class TransportMode;
 class RNG;
 
 class Filter;
-
-
-
 
 
 // definitions
@@ -203,9 +204,8 @@ static PBRT_CONSTEXPR Float Sqrt2 = 1.41421356237309504880;
 static constexpr Float MaxFloat = std::numeric_limits<Float>::max();
 static constexpr Float Infinity = std::numeric_limits<Float>::infinity();
 #define MachineEpsilon (std::numeric_limits<Float>::epsilon() * 0.5)
-#ifndef PBRT_L1_CACHE_LINE_SIZE
-	#define PBRT_L1_CACHE_LINE_SIZE 64
-#endif
+
+
 
 //#ifdef PBRT_FLOAT_IS_DOUBLE
 static const Float OneMinusEpsilon = 0x1.fffffffffffffp-1;

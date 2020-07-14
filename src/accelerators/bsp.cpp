@@ -68,7 +68,9 @@ void KdTreeAccel::buildTree(int nodeNum, const Bounds3f& nodeBounds,
 	{
 		int nNewAllocNodes = std::max(2 * nAllocedNodes, 512);
 		KdAccelNode* n = AllocAligned<KdAccelNode>(nNewAllocNodes);
-		if (nAllocedNodes > 0) {
+
+		if (nAllocedNodes > 0) 
+		{
 			memcpy(n, nodes, nAllocedNodes * sizeof(KdAccelNode));
 			FreeAligned(nodes);
 		}

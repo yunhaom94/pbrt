@@ -4,6 +4,7 @@
 #include "core/primitive.h"
 #include "core/bounding_boxes.h"
 
+
 // top to bottom: better tree/slower build to worse tree but better build
 // SAH = surface area heuristic
 // HLBVH = efficiently bvh
@@ -59,11 +60,10 @@ public:
 	const SplitMethod splitMethod;
 	std::vector<std::shared_ptr<Primitive>> primitives;
 
-
 public:
 	BVHAccel(const std::vector<std::shared_ptr<Primitive>>& p,
 		int maxPrimsInNode, SplitMethod splitMethod);
-	~BVHAccel();
+	~BVHAccel() {}
 
 	BVHBuildNode* recursiveBuild(MemoryArena& arena,
 		std::vector<BVHPrimitiveInfo>& primitiveInfo, int start,
@@ -71,7 +71,7 @@ public:
 		std::vector<std::shared_ptr<Primitive>>& orderedPrims);
 
 	// Linear time build
-	// TODO: read bout it p270
+	//read bout it p270
 	BVHBuildNode* HLBVHBuild(MemoryArena& arena,
 		const std::vector<BVHPrimitiveInfo>& primitiveInfo,
 		int* totalNodes,
