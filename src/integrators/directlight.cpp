@@ -1,4 +1,4 @@
-#include "integrators/ditectlight.h"
+#include "integrators/directlight.h"
 #include "core/sampler.h"
 #include "core/scene.h"
 #include "core/sampling.h"

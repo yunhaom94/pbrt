@@ -1,5 +1,5 @@
 #pragma once
-#include "cameras/projective_camera.h"
+#include "cameras/projective.h"
 
 class PerspectiveCamera : public ProjectiveCamera
 {

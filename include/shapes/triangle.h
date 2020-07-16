@@ -2,18 +2,7 @@
 
 #include "core/pbrt.h"
 #include "core/shape.h"
-
-// TODO: remove this
-#include "core/interaction.h"
-template <typename T> class Texture
-{
-public:
-	Texture() {}
-	~Texture() {}
-
-	int Evaluate(SurfaceInteraction s) { return 0; }
-
-};
+#include "core/texture.h"
 
 // V ~= 2F for closed meshes
 struct TriangleMesh

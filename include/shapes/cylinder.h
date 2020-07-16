@@ -6,7 +6,7 @@
 class Cylinder : public Shape
 {
 public:
-	Cylinder() {}s
+	Cylinder() {}
 	~Cylinder() {}
 
 private:

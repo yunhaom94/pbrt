@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/pbrt.h"
-#include "cameras/projective_camera.h"
+#include "cameras/projective.h"
 #include "core/transform.h"
 
 class OrthographicCamera : public ProjectiveCamera 

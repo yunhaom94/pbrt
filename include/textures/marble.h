@@ -19,7 +19,7 @@ public:
 		Vector3f dpdx, dpdy;
 		Point3f p = mapping->Map(si, &dpdx, &dpdy);
 		p *= scale;
-		Float marble = p.y + variation *
+		Float marble = p.y() + variation *
 			FBm(p, scale * dpdx, scale * dpdy, omega, octaves);
 		Float t = 0.5 + 0.5 * std::sin(marble);
 		

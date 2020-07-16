@@ -1,4 +1,4 @@
-#include "samplers/stratified_sampler.h"
+#include "samplers/stratified.h"
 
 StratifiedSampler::StratifiedSampler(int xPixelSamples,
 	int yPixelSamples,
