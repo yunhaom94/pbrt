@@ -89,6 +89,8 @@ class Filter;
 class ParamSet;
 template <typename T> struct ParamSetItem;
 
+class Integrator;
+
 
 // definitions
 // TODO: may have flag for float and double

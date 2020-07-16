@@ -1,7 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <Eigen/Core>
-
 #include "core/pbrt.h"
 #include "core/spectrum.h"
 
