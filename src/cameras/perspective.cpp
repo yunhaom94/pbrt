@@ -1,25 +1,32 @@
-#include "cameras/orthographic_camera.h"
-#include "core/film.h"
+#pragma once
+#include "cameras/perspective.h"
 #include "core/ray.h"
 #include "core/sampling.h"
 
-OrthographicCamera::OrthographicCamera(const AnimatedTransform& CameraToWorld,
+PerspectiveCamera::PerspectiveCamera(
+	const AnimatedTransform& CameraToWorld,
 	const Bounds2f& screenWindow, Float shutterOpen,
 	Float shutterClose, Float lensRadius, Float focalDistance,
-	Film* film, const Medium* medium)
-	: ProjectiveCamera(CameraToWorld, Orthographic(0, 1),
+	Float fov, Film* film, const Medium* medium)
+	: ProjectiveCamera(CameraToWorld, Perspective(fov, 1e-2f, 1000.f),
 		screenWindow, shutterOpen, shutterClose,
 		lensRadius, focalDistance, film, medium)
 {
-	dxCamera = RasterToCamera(Vector3f(1, 0, 0));
-	dyCamera = RasterToCamera(Vector3f(0, 1, 0));
+	dxCamera = (RasterToCamera(Point3f(1, 0, 0)) -
+		RasterToCamera(Point3f(0, 0, 0)));
+	dyCamera = (RasterToCamera(Point3f(0, 1, 0)) -
+		RasterToCamera(Point3f(0, 0, 0)));
+
+	//TODO: Compute image plane bounds at z = 1 for PerspectiveCamera 951
+
+
 }
 
-Float OrthographicCamera::GenerateRay(const CameraSample& sample, Ray* ray) const
+inline Float PerspectiveCamera::GenerateRay(const CameraSample& sample, Ray* ray) const
 {
 	Point3f pFilm = Point3f(sample.pFilm.x(), sample.pFilm.y(), 0);
 	Point3f pCamera = RasterToCamera(pFilm);
-	*ray = Ray(pCamera, Vector3f(0, 0, 1));
+	*ray = Ray(Point3f(0, 0, 0), Vector3f(pCamera).normalized());
 
 	if (lensRadius > 0)
 	{
@@ -36,26 +43,24 @@ Float OrthographicCamera::GenerateRay(const CameraSample& sample, Ray* ray) cons
 	return 1;
 }
 
-Float OrthographicCamera::GenerateRayDifferential(const CameraSample& sample, RayDifferential* ray) const
+inline Float PerspectiveCamera::GenerateRayDifferential(const CameraSample& sample, RayDifferential* ray) const
 {
 	Point3f pFilm = Point3f(sample.pFilm.x(), sample.pFilm.y(), 0);
 	Point3f pCamera = RasterToCamera(pFilm);
 
 	*ray = RayDifferential(Ray(pCamera, Vector3f(0, 0, 1)));
 
-	if (lensRadius > 0) 
-	{
+	if (lensRadius > 0) {
 		Point2f pLens = lensRadius * ConcentricSampleDisk(sample.pLens);
 		Float ft = focalDistance / ray->d.z();
 		Point3f pFocus = (*ray)(ft);
 		ray->o = Point3f(pLens.x(), pLens.y(), 0);
 		ray->d = (pFocus - ray->o).normalized();
 	}
-	else 
-	{
-		ray->rxOrigin = ray->o + dxCamera;
-		ray->ryOrigin = ray->o + dyCamera;
-		ray->rxDirection = ray->ryDirection = ray->d;
+	else {
+		ray->rxOrigin = ray->ryOrigin = ray->o;
+		ray->rxDirection = (Vector3f(pCamera) + dxCamera).normalized();
+		ray->ryDirection = (Vector3f(pCamera) + dyCamera).normalized();
 	}
 
 	ray->time = Lerp(sample.time, shutterOpen, shutterClose);

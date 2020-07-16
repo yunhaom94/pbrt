@@ -1,4 +1,4 @@
-#include "cameras/projective_camera.h"
+#include "cameras/projective.h"
 #include "core/film.h"
 
 ProjectiveCamera::ProjectiveCamera(const AnimatedTransform& CameraToWorld,
