@@ -87,6 +87,9 @@ class RNG;
 
 class Filter;
 
+class ParamSet;
+template <typename T> struct ParamSetItem;
+
 
 // definitions
 // TODO: may have flag for float and double
