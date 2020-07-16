@@ -4,7 +4,6 @@
 
 #include "core/pbrt.h"
 #include "core/spectrum.h"
-#include "core/options.h"
 
 void pbrtInit() 
 {

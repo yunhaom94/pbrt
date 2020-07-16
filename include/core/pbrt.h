@@ -14,6 +14,7 @@
 #include <vector>
 #include <memory>
 #include <limits>
+#include <map>
 
 // Eigen
 #include <Eigen/Core>
@@ -40,8 +41,6 @@ class Light;
 class AreaLight;
 
 class VisibilityTester;
-
-class Options;
 
 class Primitive;
 
@@ -194,6 +193,14 @@ typedef Point3<int> Point3i;
 typedef Point3<Float> Point3f;
 
 typedef Eigen::Matrix4d Matrix4x4;
+
+struct Options 
+{
+	int nThreads = 0;
+	bool quickRender = false;
+	bool quiet = false, verbose = false;
+	std::string imageFile;
+};
 
 // values
 static PBRT_CONSTEXPR Float ShadowEpsilon = 0.0001f;
