@@ -79,6 +79,11 @@ public:
 	// composition of transformation
 	Transform operator*(const Transform& t2) const;
 
+	// other ops
+	bool operator==(const Transform& t) const;
+
+	bool operator!=(const Transform& t) const;
+
 	// return if a transformation has a scaling term in it
 	// by transform 3 basis vectors and see if any of their 
 	// lengths are appreciably different from one.

@@ -23,3 +23,4 @@ public:
 		bool allowMultipleLobes) const;
 };
 
+//MatteMaterial* CreateMatteMaterial(const TextureParams& mp);

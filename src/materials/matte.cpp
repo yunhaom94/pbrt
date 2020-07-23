@@ -1,4 +1,5 @@
 #include "materials/matte.h"
+#include "core/paramset.h"
 
 
 void MatteMaterial::ComputeScatteringFunctions(SurfaceInteraction* si,
@@ -18,4 +19,14 @@ void MatteMaterial::ComputeScatteringFunctions(SurfaceInteraction* si,
 		else
 			si->bsdf->Add(ARENA_ALLOC(arena, OrenNayar)(r, sig));
 	}
+}
+
+MatteMaterial* CreateMatteMaterial(const TextureParams& mp) 
+{
+	std::shared_ptr<Texture<Spectrum>> Kd =
+		mp.GetSpectrumTexture("Kd", Spectrum(0.5f));
+	std::shared_ptr<Texture<Float>> sigma = mp.GetFloatTexture("sigma", 0.f);
+	std::shared_ptr<Texture<Float>> bumpMap =
+		mp.GetFloatTextureOrNull("bumpmap");
+	return new MatteMaterial(Kd, sigma, bumpMap);
 }

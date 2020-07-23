@@ -13,6 +13,7 @@ void pbrtCleanup()
 bool ParseFile(std::string f)
 {
     
+    return false;
 }
 
 void Error(std::string s, std::string e)

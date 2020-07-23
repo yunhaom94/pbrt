@@ -201,6 +201,16 @@ Transform Transform::operator*(const Transform& t2) const {
 	return Transform(m * t2.m, mInv * t2.mInv);
 }
 
+bool Transform::operator==(const Transform& t) const
+{
+	return t.m == m && t.mInv == mInv;
+}
+
+bool Transform::operator!=(const Transform& t) const
+{
+	return t.m != m || t.mInv != mInv;
+}
+
 bool Transform::HasScale() const
 {
 	Float la2 = (*this)(Vector3f(1, 0, 0)).squaredNorm();
