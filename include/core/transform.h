@@ -1,7 +1,9 @@
 #pragma once
 
 #include "core/pbrt.h"
+#include "core/quaternion.h"
 #include "utlis/utlis.h"
+
 
 // this is a class of transformation matrices
 // they are all 4x4 because we are in 3D world and extra dimension helps
@@ -10,7 +12,8 @@ class Transform
 {
 private:
 	Matrix4x4 m, mInv;
-
+	friend struct Quaternion;
+	friend class AnimatedTransform;
 
 public:
 	Transform() : m(Matrix4x4::Identity()), mInv(m.inverse()) {}
@@ -99,21 +102,56 @@ public:
 	}
 };
 
-// TODO: p97
 class AnimatedTransform
 {
-public:
-	AnimatedTransform() {}
-	~AnimatedTransform() {}
+private:
+	// AnimatedTransform Private Data
+	const Transform* startTransform, * endTransform;
+	const Float startTime, endTime;
+	const bool actuallyAnimated;
+	Vector3f T[2];
+	Quaternion R[2];
+	Matrix4x4 S[2];
+	bool hasRotation;
+	struct DerivativeTerm {
+		DerivativeTerm() {}
+		DerivativeTerm(Float c, Float x, Float y, Float z)
+			: kc(c), kx(x), ky(y), kz(z) {}
+		Float kc, kx, ky, kz;
+		Float Eval(const Point3f& p) const {
+			return kc + kx * p.x() + ky * p.y() + kz * p.z();
+		}
+	};
+	DerivativeTerm c1[3], c2[3], c3[3], c4[3], c5[3];
 
-	void Interpolate(Float time, Transform* t) const {}
+public:
+	// AnimatedTransform Public Methods
+	AnimatedTransform(const Transform* startTransform, Float startTime,
+		const Transform* endTransform, Float endTime);
+
+	static void Decompose(const Matrix4x4& m, Vector3f* T, Quaternion* R,
+		Matrix4x4* S);
+
+	void Interpolate(Float time, Transform* t) const;
 
 	Ray operator()(const Ray& r) const;
+
 	RayDifferential operator()(const RayDifferential& r) const;
+
 	Point3f operator()(Float time, const Point3f& p) const;
+
 	Vector3f operator()(Float time, const Vector3f& v) const;
 
-private:
+	bool HasScale() const
+	{
+		return startTransform->HasScale() || endTransform->HasScale();
+	}
+
+	// taking a bounding box and returning the bounding box of its motion
+	// over the AnimatedTransform¡¯s time range.
+	Bounds3f MotionBounds(const Bounds3f& b) const;
+
+	Bounds3f BoundPointMotion(const Point3f& p) const;
 
 };
 
@@ -132,6 +170,11 @@ Transform RotateZ(Float theta);
 // rotate around axis vector 
 // theta is in radians
 Transform Rotate(Float theta, const Vector3f& axis);
+
+Transform Inverse(const Transform& t);
+Transform Transpose(const Transform& t);
+Matrix4x4 Transpose(const Matrix4x4& m);
+
 
 // give the transform matrix from world space to camera space
 // Ex: can be used to transform camera rays to world space (with the inverse of it)
@@ -285,6 +328,5 @@ inline Normal3<T> Transform::operator()(const Normal3<T>&n) const
 	Normal3<T> ret = (Eigen::Matrix <T, 4, 1>(x, y, z, 0).transpose() * mInv).head(3);
 	return ret;
 }
-
 
 

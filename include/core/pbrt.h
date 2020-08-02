@@ -91,6 +91,8 @@ template <typename T> struct ParamSetItem;
 
 class Integrator;
 
+class Quaternion;
+
 
 // definitions
 // TODO: may have flag for float and double
