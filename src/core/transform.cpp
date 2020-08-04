@@ -53,9 +53,9 @@ Transform Scale(Float x, Float y, Float z)
 		 0, 0, 0, 1;
 
 	Matrix4x4 minv;
-	m << 1.0 / x, 0, 0, 0,
-		 0, 1.0 / y, 0, 0,
-		 0, 0, 1.0 / z, 0,
+    minv << (1.0 / x), 0, 0, 0,
+		 0, (1.0 / y), 0, 0,
+		 0, 0, (1.0 / z), 0,
 		 0, 0, 0, 1;
 
 	return Transform(m, minv);
@@ -189,6 +189,18 @@ Ray Transform::operator()(const Ray& r, const Vector3f& oErrorIn, const Vector3f
 	// TODO: Offset ray origin to edge of error bounds and compute tMax p233
 
 	return Ray(o, d, r.tMax, r.time, r.medium);
+}
+
+RayDifferential Transform::operator()(const RayDifferential& r) const
+{
+    Ray tr = (*this)(Ray(r));
+    RayDifferential ret(tr.o, tr.d, tr.tMax, tr.time, tr.medium);
+    ret.hasDifferentials = r.hasDifferentials;
+    ret.rxOrigin = (*this)(r.rxOrigin);
+    ret.ryOrigin = (*this)(r.ryOrigin);
+    ret.rxDirection = (*this)(r.rxDirection);
+    ret.ryDirection = (*this)(r.ryDirection);
+    return ret;
 }
 
 
@@ -1144,25 +1156,56 @@ void AnimatedTransform::Interpolate(Float time, Transform* t) const
 }
 
 
-Ray AnimatedTransform::operator()(const Ray& r) const
+Ray AnimatedTransform::operator()(const Ray& r) const 
 {
-	return Ray();
+    if (!actuallyAnimated || r.time <= startTime)
+        return (*startTransform)(r);
+    else if (r.time >= endTime)
+        return (*endTransform)(r);
+    else
+    {
+        Transform t;
+        Interpolate(r.time, &t);
+        return t(r);
+    }
 }
 
 RayDifferential AnimatedTransform::operator()(const RayDifferential& r) const
 {
-	return RayDifferential();
+    if (!actuallyAnimated || r.time <= startTime)
+        return (*startTransform)(r);
+    else if (r.time >= endTime)
+        return (*endTransform)(r);
+    else 
+    {
+        Transform t;
+        Interpolate(r.time, &t);
+        return t(r);
+    }
 }
 
 Point3f AnimatedTransform::operator()(Float time, const Point3f& p) const
 {
-	return Point3f();
+    if (!actuallyAnimated || time <= startTime)
+        return (*startTransform)(p);
+    else if (time >= endTime)
+        return (*endTransform)(p);
+    Transform t;
+    Interpolate(time, &t);
+    return t(p);
 }
 
 Vector3f AnimatedTransform::operator()(Float time, const Vector3f& v) const
 {
-	return Vector3f();
+    if (!actuallyAnimated || time <= startTime)
+        return (*startTransform)(v);
+    else if (time >= endTime)
+        return (*endTransform)(v);
+    Transform t;
+    Interpolate(time, &t);
+    return t(v);
 }
+
 
 Bounds3f AnimatedTransform::MotionBounds(const Bounds3f& b) const
 {

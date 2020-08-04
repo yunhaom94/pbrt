@@ -198,7 +198,7 @@ inline Point3<T> Transform::operator()(const Point3<T>& p) const
 	T x = p.x(), y = p.y(), z = p.z();
 	T wp = m.row(3)[0] * x + m.row(3)[1] * y + m.row(3)[2] * z + m.row(3)[3];
 
-	Point3<T> ret = (Eigen::Matrix <T, 4, 1>(x, y, z, 0).transpose() * m).head(3);
+	Point3<T> ret = (m * Eigen::Matrix <T, 4, 1>(x, y, z, 1)).head(3);
 
 	if (wp == 1)
 		return ret;
