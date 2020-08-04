@@ -10,6 +10,7 @@ class ProjectiveCamera : public Camera
 
 protected:
 	Transform CameraToScreen, RasterToCamera;
+	Transform ScreenToRaster, RasterToScreen;
 	Float lensRadius, focalDistance;
 
 public:

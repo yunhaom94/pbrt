@@ -51,7 +51,11 @@ public:
 	{
 		hasDifferentials = false;
 	}
-
+	RayDifferential(const Point3f& o, const Vector3f& d, Float tMax = Infinity,
+		Float time = 0.f, const Medium* medium = nullptr)
+		: Ray(o, d, tMax, time, medium) {
+		hasDifferentials = false;
+	}
 	// update differential rays for an estimated sample spacing of s.
 	void ScaleDifferentials(Float s);
 

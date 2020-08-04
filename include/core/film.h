@@ -16,6 +16,7 @@ inline void WriteImage(const std::string& name, const Float* rgb,
 class Film
 {
 public:
+	// resolution of the image in pixels;
 	const Point2i fullResolution;
 	const Float diagonal;
 	std::unique_ptr<Filter> filter;
@@ -38,6 +39,7 @@ private:
 	Float scale;
 
 public:
+	// cropWindow: a crop window that may specify a subset of the image to render in [0-1]
 	Film(const Point2i& resolution, const Bounds2f& cropWindow,
 		std::unique_ptr<Filter> filt, Float diagonal,
 		const std::string& filename, Float scale);
