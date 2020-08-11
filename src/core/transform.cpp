@@ -130,7 +130,6 @@ Transform Orthographic(Float zNear, Float zFar)
 
 Transform Perspective(Float fov, Float n, Float f)
 {
-
 	Matrix4x4 persp;
 	persp << 1, 0, 0, 0,
 		0, 1, 0, 0,
@@ -221,7 +220,7 @@ Bounds3f Transform::operator()(const Bounds3f& b) const
 }
 
 Transform Transform::operator*(const Transform& t2) const {
-	return Transform(m * t2.m, mInv * t2.mInv);
+	return Transform(m * t2.m, t2.mInv * mInv);
 }
 
 bool Transform::operator==(const Transform& t) const

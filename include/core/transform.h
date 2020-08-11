@@ -272,7 +272,7 @@ template<typename T>
 inline Vector3<T> Transform::operator()(const Vector3<T>& v) const
 {
 	T x = v.x(), y = v.y(), z = v.z();
-	Vector3<T> ret = (Eigen::Matrix <T, 4, 1>(x, y, z, 0).transpose() * m).head(3);
+	Vector3<T> ret = (m * Eigen::Matrix <T, 4, 1>(x, y, z, 1)).head(3);
 	return ret;
 }
 
@@ -325,7 +325,7 @@ template<typename T>
 inline Normal3<T> Transform::operator()(const Normal3<T>&n) const
 {
 	T x = n.x(), y = n.y(), z = n.z();
-	Normal3<T> ret = (Eigen::Matrix <T, 4, 1>(x, y, z, 0).transpose() * mInv).head(3);
+	Normal3<T> ret = (mInv * Eigen::Matrix <T, 4, 1>(x, y, z, 1)).head(3);
 	return ret;
 }
 

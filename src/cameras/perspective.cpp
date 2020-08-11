@@ -8,7 +8,7 @@ PerspectiveCamera::PerspectiveCamera(
 	const Bounds2f& screenWindow, Float shutterOpen,
 	Float shutterClose, Float lensRadius, Float focalDistance,
 	Float fov, Film* film, const Medium* medium)
-	: ProjectiveCamera(CameraToWorld, Perspective(fov, 1e-2f, 1000.f),
+	: ProjectiveCamera(CameraToWorld, Perspective(fov, 1e-2f, 1000.0),
 		screenWindow, shutterOpen, shutterClose,
 		lensRadius, focalDistance, film, medium)
 {
@@ -26,6 +26,9 @@ inline Float PerspectiveCamera::GenerateRay(const CameraSample& sample, Ray* ray
 {
 	Point3f pFilm = Point3f(sample.pFilm.x(), sample.pFilm.y(), 0);
 	Point3f pCamera = RasterToCamera(pFilm);
+
+	// since all rays starts from origin in camera space, the direction
+	// is the location of pixel of film once is transformed into camera space
 	*ray = Ray(Point3f(0, 0, 0), Vector3f(pCamera).normalized());
 
 	if (lensRadius > 0)

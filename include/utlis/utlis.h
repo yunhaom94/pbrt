@@ -128,9 +128,9 @@ inline Float Mod(Float a, Float b)
 	return std::fmod(a, b);
 }
 
-inline Float Radians(Float deg) { return (Pi / 180) * deg; }
+inline Float Radians(Float deg) { return (Pi / 180.0) * deg; }
 
-inline Float Degrees(Float rad) { return (180 / Pi) * rad; }
+inline Float Degrees(Float rad) { return (180.0 / Pi) * rad; }
 
 inline Float Log2(Float x) 
 {
