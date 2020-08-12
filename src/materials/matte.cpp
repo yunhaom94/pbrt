@@ -1,6 +1,10 @@
 #include "materials/matte.h"
 #include "core/paramset.h"
-
+#include "core/interaction.h"
+#include "core/texture.h"
+#include "core/spectrum.h"
+#include "core/reflection.h"
+#include "utlis/utlis.h"
 
 void MatteMaterial::ComputeScatteringFunctions(SurfaceInteraction* si,
 	MemoryArena& arena, TransportMode mode,

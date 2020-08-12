@@ -1,4 +1,10 @@
 #include "core/material.h"
+#include "core/interaction.h"
+#include "core/texture.h"
+#include "core/spectrum.h"
+#include "core/reflection.h"
+#include "utlis/utlis.h"
+
 
 void Material::Bump(const std::shared_ptr<Texture<Float>>& d,
 	SurfaceInteraction* si) const

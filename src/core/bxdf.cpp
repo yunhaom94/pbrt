@@ -1,4 +1,4 @@
-#include "core/bxdf.h"
+#include "core/reflection.h"
 #include "core/microfacet.h"
 #include "core/sampling.h"
 #include "core/memory.h"

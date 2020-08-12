@@ -6,7 +6,7 @@
 #include "core/light.h"
 #include "core/sampler.h"
 #include "core/memory.h"
-#include "core/bxdf.h"
+#include "core/reflection.h"
 
 Spectrum WhittedIntegrator::Li(const RayDifferential& ray,
 	const Scene& scene, Sampler& sampler, MemoryArena& arena,

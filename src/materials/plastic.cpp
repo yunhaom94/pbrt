@@ -1,5 +1,10 @@
 #include "materials/plastic.h"
 #include "core/microfacet.h"
+#include "core/interaction.h"
+#include "core/texture.h"
+#include "core/spectrum.h"
+#include "core/reflection.h"
+#include "utlis/utlis.h"
 
 void PlasticMaterial::ComputeScatteringFunctions(
 	SurfaceInteraction* si, MemoryArena& arena, TransportMode mode,

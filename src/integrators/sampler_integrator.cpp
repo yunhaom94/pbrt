@@ -7,7 +7,7 @@
 #include "core/ray.h"
 #include "core/spectrum.h"
 #include "core/interaction.h"
-#include "core/bxdf.h"
+#include "core/reflection.h"
 
 void SamplerIntegrator::Render(const Scene& scene)
 {

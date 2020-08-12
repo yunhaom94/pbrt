@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/material.h"
+#include "core/reflection.h"
 
 class FourierMaterial : public Material
 {

@@ -2,7 +2,7 @@
 
 #include "core/pbrt.h"
 #include "core/medium_interface.h"
-#include "core/transport_mode.h"
+#include "core/material.h"
 
 struct Interaction
 {

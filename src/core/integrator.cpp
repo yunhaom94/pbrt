@@ -2,7 +2,7 @@
 #include "core/spectrum.h"
 #include "core/sampler.h"
 #include "core/scene.h"
-#include "core/bxdf.h"
+#include "core/reflection.h"
 #include "core/sampling.h"
 
 Spectrum UniformSampleAllLights(const Interaction& it, const Scene& scene,

@@ -1,13 +1,13 @@
 #pragma once
 
 #include "core/pbrt.h"
-#include "core/bxdf.h"
-#include "core/interaction.h"
 #include "core/memory.h"
-#include "core/texture.h"
-#include "core/spectrum.h"
-#include "utlis/utlis.h"
 
+
+enum class TransportMode 
+{
+	Radiance, Importance 
+};
 
 class Material
 {

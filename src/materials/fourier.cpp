@@ -1,4 +1,9 @@
 #include "materials/fourier.h"
+#include "core/interaction.h"
+#include "core/texture.h"
+#include "core/spectrum.h"
+#include "core/reflection.h"
+#include "utlis/utlis.h"
 
 FourierMaterial::FourierMaterial(const std::string& filename,
 	const std::shared_ptr<Texture<Float>>& bumpMap)

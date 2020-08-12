@@ -2,7 +2,6 @@
 #include "core/shape.h"
 #include "core/bounding_boxes.h"
 #include "core/interaction.h"
-#include "core/transport_mode.h"
 #include "core/material.h"
 
 GeometricPrimitive::GeometricPrimitive(std::shared_ptr<Shape> shape, std::shared_ptr<Material> material,

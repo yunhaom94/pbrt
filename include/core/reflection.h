@@ -1,7 +1,7 @@
 #pragma once
 #include "core/pbrt.h"
 #include "core/spectrum.h"
-#include "core/transport_mode.h"
+#include "core/material.h"
 #include "core/interaction.h"
 #include "utlis/utlis.h"
 #include "utlis/bsdf.h"

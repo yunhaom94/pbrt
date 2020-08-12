@@ -1,4 +1,9 @@
 #include "materials/mixmat.h"
+#include "core/interaction.h"
+#include "core/texture.h"
+#include "core/spectrum.h"
+#include "core/reflection.h"
+#include "utlis/utlis.h"
 
 void MixMaterial::ComputeScatteringFunctions(SurfaceInteraction* si,
 	MemoryArena& arena, TransportMode mode,

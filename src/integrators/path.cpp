@@ -3,7 +3,7 @@
 #include "core/ray.h"
 #include "core/interaction.h"
 #include "core/scene.h"
-#include "core/bxdf.h"
+#include "core/reflection.h"
 #include "core/sampler.h"
 
 PathIntegrator::PathIntegrator(int maxDepth, std::shared_ptr<const Camera> camera,
