@@ -22,12 +22,16 @@ Float FrDielectric(Float cosThetaI, Float etaI, Float etaT);
 Spectrum FrConductor(Float cosThetaI, const Spectrum& etaI,
 	const Spectrum& etaT, const Spectrum& k);
 
+// abstraction to Fresnel function calculation
 class Fresnel 
 {
 public:
+	// returns the amount of light reflected by the surface.
+	// note is a Specturm object with float value just used as scale
 	virtual Spectrum Evaluate(Float cosI) const = 0;
 };
 
+// Fresnel for conductor
 class FresnelConductor : public Fresnel 
 {
 private:
@@ -53,13 +57,15 @@ public:
 
 };
 
+// 100% reflection
 class FresnelNoOp : public Fresnel 
 {
 public:
 	Spectrum Evaluate(Float) const { return Spectrum(1.0); }
 };
 
-// describe a type of light behavior on a point on a surface
+// holds a collection of BxDF functions for a given
+// reflection point and any bxdf base class
 class BxDF
 {
 public:
@@ -76,16 +82,20 @@ public:
 	}
 
 	// returns the value of the distribution function for the given pair of directions.
-	// (defused)
+	// (defused scattering)
 	virtual Spectrum f(const Vector3f& wo, const Vector3f& wi) const = 0;
 
 	Float Pdf(const Vector3f& wo, const Vector3f& wi) const;
 
-	// with only one direction (specular)
+	// reflect at only one direction (specular), save the direction to wi
+	// also used randomly sampling directions
+	// wi is the output direction
+	// pdf is the probability distribution function at the direction
 	Spectrum Sample_f(const Vector3f& wo, Vector3f* wi,
 		const Point2f& u, Float* pdf, BxDFType* sampledType = nullptr) const;
 
-	// hemispherical-directional reflectance function
+	// hemispherical-directional reflectance function 
+	// (total reflected light on the hemispherical)
 	virtual Spectrum rho(const Vector3f& w, int nSamples,
 		const Point2f* u) const;
 
@@ -181,6 +191,7 @@ public:
 	}
 };
 
+// combination of both reflection and refraction transmission
 class FresnelSpecular : public BxDF 
 {
 public:
@@ -217,6 +228,7 @@ public:
 
 	Spectrum f(const Vector3f& wo, const Vector3f& wi) const;
 
+	// because it perfectly reflect all light
 	Spectrum rho(const Vector3f&, int, const Point2f*) const { return R; }
 	Spectrum rho(int, const Point2f*, const Point2f*) const { return R; }
 
@@ -230,9 +242,11 @@ private:
 	Float A, B;
 
 public:
+
 	OrenNayar(const Spectrum& R, Float sigma)
 		: BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), R(R)
 	{
+		// some approximations are here
 		sigma = Radians(sigma);
 		Float sigma2 = sigma * sigma;
 		A = 1.f - (sigma2 / (2.f * (sigma2 + 0.33f)));
@@ -241,9 +255,6 @@ public:
 
 	Spectrum f(const Vector3f& wo, const Vector3f& wi) const;
 
-	// TODO:
-	Spectrum rho(const Vector3f&, int, const Point2f*) const { return R; }
-	Spectrum rho(int, const Point2f*, const Point2f*) const { return R; }
 
 };
 

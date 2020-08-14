@@ -3,7 +3,8 @@
 #include "core/pbrt.h"
 #include "utlis/bsdf.h"
 
-// faces distributions
+// abstraction for more advance
+// Microfacet distributions functions
 class MicrofacetDistribution
 {
 protected:
@@ -13,8 +14,7 @@ public:
 
 	~MicrofacetDistribution() {}
 
-
-	// the differential area of microfacets 
+	// return differential area of microfacets 
 	// oriented with the given normal vector
 	virtual Float D(const Vector3f& wh) const = 0;
 
