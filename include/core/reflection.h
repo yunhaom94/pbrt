@@ -375,11 +375,15 @@ public:
 class BSDF
 {
 public:
+	// relative index of refraction
 	const Float eta;
 
 private:
+	// shading normal (used for pre-vertex normal and bump mapping)
+	// and geometric normal
 	const Normal3f ns, ng;
 	const Vector3f ss, ts;
+	// num of bsdf
 	int nBxDFs = 0;
 	static constexpr int MaxBxDFs = 8;
 	BxDF* bxdfs[MaxBxDFs];
@@ -408,8 +412,8 @@ public:
 	Vector3f LocalToWorld(const Vector3f& v) const
 	{
 		return Vector3f(ss.x() * v.x() + ts.x() * v.y() + ns.x() * v.z(),
-			ss.y() * v.x() + ts.y() * v.y() + ns.y() * v.z(),
-			ss.z() * v.x() + ts.z() * v.y() + ns.z() * v.z());
+						ss.y() * v.x() + ts.y() * v.y() + ns.y() * v.z(),
+						ss.z() * v.x() + ts.z() * v.y() + ns.z() * v.z());
 	}
 
 	Spectrum f(const Vector3f& woW, const Vector3f& wiW, BxDFType flags = BSDF_ALL) const;
@@ -434,7 +438,8 @@ inline int BSDF::NumComponents(BxDFType flags) const
 {
 	int num = 0;
 	for (int i = 0; i < nBxDFs; ++i)
-		if (bxdfs[i]->MatchesFlags(flags)) ++num;
+		if (bxdfs[i]->MatchesFlags(flags)) 
+			++num;
 	return num;
 }
 

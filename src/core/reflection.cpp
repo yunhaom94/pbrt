@@ -481,15 +481,19 @@ Spectrum FourierBSDF::f(const Vector3f& wo, const Vector3f& wi) const
 }
 
 Spectrum BSDF::f(const Vector3f& woW, const Vector3f& wiW,
-	BxDFType flags) const {
+	BxDFType flags) const 
+{
 	Vector3f wi = WorldToLocal(wiW), wo = WorldToLocal(woW);
 	bool reflect = wiW.dot(ng) * woW.dot(ng) > 0;
-	Spectrum f(0.f);
+	Spectrum f(0.0);
+	
 	for (int i = 0; i < nBxDFs; ++i)
+	{
 		if (bxdfs[i]->MatchesFlags(flags) &&
-			((reflect && (bxdfs[i]->type & BSDF_REFLECTION)) ||
-				(!reflect && (bxdfs[i]->type & BSDF_TRANSMISSION))))
+		   ((reflect && (bxdfs[i]->type & BSDF_REFLECTION)) ||
+		   (!reflect && (bxdfs[i]->type & BSDF_TRANSMISSION))))
 			f += bxdfs[i]->f(wo, wi);
+	}
 	return f;
 }
 
@@ -520,49 +524,66 @@ Spectrum BSDF::Sample_f(const Vector3f& woWorld, Vector3f* wiWorld,
 	const Point2f& u, Float* pdf, BxDFType type, BxDFType* sampledType) const
 {
 	int matchingComps = NumComponents(type);
-	if (matchingComps == 0) {
+	if (matchingComps == 0)
+	{
 		*pdf = 0;
-		return Spectrum(0);
+		return Spectrum(0.0);
 	}
+
 	int comp = std::min((int)std::floor(u[0] * matchingComps),
 		matchingComps - 1);
 	
 	BxDF* bxdf = nullptr;
 	int count = comp;
 	for (int i = 0; i < nBxDFs; ++i)
-		if (bxdfs[i]->MatchesFlags(type) && count-- == 0) {
+	{
+		if (bxdfs[i]->MatchesFlags(type) && count-- == 0) 
+		{
 			bxdf = bxdfs[i];
 			break;
 		}
+	}
 
 	Point2f uRemapped(u[0] * matchingComps - comp, u[1]);
 
 	Vector3f wi, wo = WorldToLocal(woWorld);
 	*pdf = 0;
-	if (sampledType) *sampledType = bxdf->type;
+	if (sampledType) 
+		*sampledType = bxdf->type;
+
 	Spectrum f = bxdf->Sample_f(wo, &wi, uRemapped, pdf, sampledType);
+	
 	if (*pdf == 0)
 		return 0;
+	
 	*wiWorld = LocalToWorld(wi);
 
 	if (!(bxdf->type & BSDF_SPECULAR) && matchingComps > 1)
+	{
 		for (int i = 0; i < nBxDFs; ++i)
+		{
 			if (bxdfs[i] != bxdf && bxdfs[i]->MatchesFlags(type))
 				*pdf += bxdfs[i]->Pdf(wo, wi);
-	if (matchingComps > 1) *pdf /= matchingComps;
+		}
+	}
 
-	if (!(bxdf->type & BSDF_SPECULAR) && matchingComps > 1) {
+	if (matchingComps > 1) 
+		*pdf /= matchingComps;
+
+	if (!(bxdf->type & BSDF_SPECULAR) && matchingComps > 1)
+	{
 		bool reflect = (*wiWorld).dot(ng) * woWorld.dot(ng) > 0;
 		f = 0.;
 		for (int i = 0; i < nBxDFs; ++i)
+		{
 			if (bxdfs[i]->MatchesFlags(type) &&
 				((reflect && (bxdfs[i]->type & BSDF_REFLECTION)) ||
-					(!reflect && (bxdfs[i]->type & BSDF_TRANSMISSION))))
+				(!reflect && (bxdfs[i]->type & BSDF_TRANSMISSION))))
 				f += bxdfs[i]->f(wo, wi);
+		}
 	}
 	return f;
 
-	return Spectrum();
 }
 
 Spectrum BSDF::rho(int nSamples, const Point2f* samples1, const Point2f* samples2, BxDFType flags) const
