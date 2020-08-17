@@ -13,11 +13,15 @@ void MatteMaterial::ComputeScatteringFunctions(SurfaceInteraction* si,
 	if (bumpMap)
 		Bump(bumpMap, si);
 
-
 	si->bsdf = ARENA_ALLOC(arena, BSDF)(*si);
+
+	// get the values of the diffuse reflection spectrum
+	// at current interaction point
 	Spectrum r = Kd->Evaluate(*si).Clamp();
 	Float sig = Clamp(sigma->Evaluate(*si), 0, 90);
-	if (!r.IsBlack()) {
+	
+	if (!r.IsBlack()) 
+	{
 		if (sig == 0)
 			si->bsdf->Add(ARENA_ALLOC(arena, LambertianReflection)(r));
 		else

@@ -3,12 +3,16 @@
 #include "core/pbrt.h"
 #include "core/material.h"
 
-// a defused material
+// a defuse only material
 class MatteMaterial : public Material
 {
 private:
+	// spectral diffuse reflection value
 	std::shared_ptr<Texture<Spectrum>> Kd;
-	std::shared_ptr<Texture<Float>> sigma, bumpMap;
+	// scalar roughness value 
+	// (if sigma = 0, then lambertian otherwise orennayar)
+	std::shared_ptr<Texture<Float>> sigma;
+	std::shared_ptr<Texture<Float>> bumpMap;
 
 public:
 	MatteMaterial(const std::shared_ptr<Texture<Spectrum>>& Kd,

@@ -37,11 +37,14 @@ Spectrum UniformSampleOneLight(const Interaction& it,
     bool handleMedia)
 {
     int nLights = int(scene.lights.size());
-    if (nLights == 0) return Spectrum(0.f);
+    if (nLights == 0) 
+        return Spectrum(0.f);
+
     int lightNum = std::min((int)(sampler.Get1D() * nLights), nLights - 1);
     const std::shared_ptr<Light>& light = scene.lights[lightNum];
-        Point2f uLight = sampler.Get2D();
+    Point2f uLight = sampler.Get2D();
     Point2f uScattering = sampler.Get2D();
+
     return (Float)nLights *
         EstimateDirect(it, uScattering, *light, uLight, scene, sampler,
             arena, handleMedia);

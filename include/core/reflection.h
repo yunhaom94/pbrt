@@ -64,8 +64,7 @@ public:
 	Spectrum Evaluate(Float) const { return Spectrum(1.0); }
 };
 
-// holds a collection of BxDF functions for a given
-// reflection point and any bxdf base class
+// any bxdf function base class
 class BxDF
 {
 public:
