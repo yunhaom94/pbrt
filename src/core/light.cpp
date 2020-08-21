@@ -23,14 +23,15 @@ AreaLight::AreaLight(const Transform& LightToWorld, const MediumInterface& mediu
 	: Light((int)LightFlags::Area, LightToWorld, medium, nSamples) { }
 
 
-bool VisibilityTester::Unoccluded(const Scene& scene) const {
+bool VisibilityTester::Unoccluded(const Scene& scene) const
+{
 	return !scene.IntersectP(p0.SpawnRayTo(p1));
 }
 
 Spectrum VisibilityTester::Tr(const Scene& scene, Sampler& sampler) const
 {
 	Ray ray(p0.SpawnRayTo(p1));
-	Spectrum Tr(1.f);
+	Spectrum Tr(1.0);
 	while (true) 
 	{
 		SurfaceInteraction isect;
@@ -44,7 +45,7 @@ Spectrum VisibilityTester::Tr(const Scene& scene, Sampler& sampler) const
 		ray = isect.SpawnRayTo(p1);
 	}
 	return Tr;
-	return Spectrum();
+
 }
 
 

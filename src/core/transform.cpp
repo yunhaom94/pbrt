@@ -143,31 +143,36 @@ Transform Perspective(Float fov, Float n, Float f)
 Transform LookAt(const Vector3f& pos, const Vector3f& look, const Vector3f& up)
 {
 
-	Vector3f dir = (look - pos).normalized();
-	Vector3f left = (up.normalized().cross(dir)).normalized();
-	Vector3f newUp = dir.cross(left);
+    Vector3f dir = (look - pos).normalized();
+    Vector3f left = (up.normalized().cross(dir)).normalized();
+    Vector3f newUp = dir.cross(left);
 
-	Matrix4x4 cameraToWorld;
+    Matrix4x4 cameraToWorld;
 
-	cameraToWorld << 
-		left.x(), newUp.x(), dir.x(), pos.x(),
-		left.y(), newUp.y(), dir.y(), pos.y(),
-		left.z(), newUp.z(), dir.z(), pos.z(),
-		0,        0,         0,       1;
+    cameraToWorld <<
+        left.x(), newUp.x(), dir.x(), pos.x(),
+        left.y(), newUp.y(), dir.y(), pos.y(),
+        left.z(), newUp.z(), dir.z(), pos.z(),
+        0, 0, 0, 1;
 
-	return Transform(cameraToWorld.inverse(), cameraToWorld);
+    return Transform(cameraToWorld.inverse(), cameraToWorld);
 }
 
 
 Ray Transform::operator()(const Ray& r) const
 {
-	Vector3f oError;
-	Point3f o3 = (*this)(r.o);
-	Vector3f d3 = (*this)(r.d);
-
-	// TODO: Offset ray origin to edge of error bounds and compute tMax p233
-
-	return Ray(o3, d3, r.tMax, r.time, r.medium);
+    Vector3f oError;
+    Point3f o = (*this)(r.o, &oError);
+    Vector3f d = (*this)(r.d);
+    // Offset ray origin to edge of error bounds and compute _tMax_
+    Float lengthSquared = d.squaredNorm();
+    Float tMax = r.tMax;
+    if (lengthSquared > 0) {
+        Float dt = d.cwiseAbs().dot(oError) / lengthSquared;
+        o += d * dt;
+        tMax -= dt;
+    }
+    return Ray(o, d, tMax, r.time, r.medium);
 }
 
 Ray Transform::operator()(const Ray& r, Vector3f* oError, Vector3f* dError) const
@@ -257,28 +262,40 @@ bool Transform::SwapsHandedness() const
 SurfaceInteraction Transform::operator()(const SurfaceInteraction& si) const
 {
 	SurfaceInteraction ret;
-	// TODO: Transform p and pError in SurfaceInteraction p229
+	// Transform p and pError in SurfaceInteraction p229
+    ret.p = (*this)(si.p, si.pError, &ret.pError);
 
 	// TODO: maybe write a clone function
-	ret.wo = (*this)(si.wo);
-	ret.n = (*this)(si.n);
-	ret.time = si.time;
-	ret.bsdf = si.bsdf;
-	ret.surfaceInteraction = si.surfaceInteraction;
-	ret.mediumInterface = si.mediumInterface;
-	ret.uv = si.uv;
-	ret.dpdu = (*this)(si.dpdu);
-	ret.dpdv = (*this)(si.dpdv);
-	ret.dndu = (*this)(si.dndu);
-	ret.dndv = (*this)(si.dndv);
-	ret.shape = si.shape;
-	ret.shading.n = (*this)(si.shading.n).normalized();
-	ret.shading.dpdu = (*this)(si.shading.dpdu);
-	ret.shading.dpdv = (*this)(si.shading.dpdv);
-	ret.shading.dndu = (*this)(si.shading.dndu);
-	ret.shading.dndv = (*this)(si.shading.dndv);
+    const Transform& t = *this;
+    ret.n = (t(si.n)).normalized();
+    ret.wo = (t(si.wo)).normalized();
+    ret.time = si.time;
+    ret.mediumInterface = si.mediumInterface;
+    ret.uv = si.uv;
+    ret.shape = si.shape;
+    ret.dpdu = t(si.dpdu);
+    ret.dpdv = t(si.dpdv);
+    ret.dndu = t(si.dndu);
+    ret.dndv = t(si.dndv);
+    ret.shading.n = (t(si.shading.n)).normalized();
+    ret.shading.dpdu = t(si.shading.dpdu);
+    ret.shading.dpdv = t(si.shading.dpdv);
+    ret.shading.dndu = t(si.shading.dndu);
+    ret.shading.dndv = t(si.shading.dndv);
+    ret.dudx = si.dudx;
+    ret.dvdx = si.dvdx;
+    ret.dudy = si.dudy;
+    ret.dvdy = si.dvdy;
+    ret.dpdx = t(si.dpdx);
+    ret.dpdy = t(si.dpdy);
+    ret.bsdf = si.bsdf;
+    ret.bssrdf = si.bssrdf;
+    ret.primitive = si.primitive;
+    //    ret.n = Faceforward(ret.n, ret.shading.n);
+    ret.shading.n = Faceforward(ret.shading.n, ret.n);
+    // ret.faceIndex = si.faceIndex;
+    return ret;
 
-	return ret;
 }
 
 class Interval
@@ -1074,6 +1091,7 @@ AnimatedTransform::AnimatedTransform(const Transform* startTransform,
             theta);
     }
 }
+
 void AnimatedTransform::Decompose(const Matrix4x4& m, Vector3f* T,
 	Quaternion* Rquat, Matrix4x4* S)
 {
