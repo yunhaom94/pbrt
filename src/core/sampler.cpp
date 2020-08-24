@@ -13,8 +13,7 @@ bool Sampler::SetSampleNumber(int64_t sampleNum)
 CameraSample Sampler::GetCameraSample(Point2i pRaster)
 {
 	CameraSample cs;
-	cs.pFilm.x() = Get2D().x() + pRaster.x();
-	cs.pFilm.y() = Get2D().y() + pRaster.y();
+	cs.pFilm = (Point2f)pRaster + Get2D();
 	cs.time = Get1D();
 	cs.pLens = Get2D();
 	return cs;
@@ -26,6 +25,12 @@ void Sampler::StartPixel(const Point2i& p)
 	currentPixelSampleIndex = 0;
 	array1DOffset = array2DOffset = 0;
 
+}
+
+bool Sampler::StartNextSample()
+{
+	array1DOffset = array2DOffset = 0;
+	return ++currentPixelSampleIndex < samplesPerPixel;
 }
 
 void Sampler::Request1DArray(int n)
@@ -54,13 +59,6 @@ const Point2f* Sampler::Get2DArray(int n)
 	return &sampleArray2D[array2DOffset++][currentPixelSampleIndex * n];
 }
 
-bool Sampler::StartNextSample()
-{
-	array1DOffset = array2DOffset = 0;
-	return ++currentPixelSampleIndex < samplesPerPixel;
-}
-
-
 PixelSampler::PixelSampler(int64_t samplesPerPixel,
 	int nSampledDimensions)
 	: Sampler(samplesPerPixel)
@@ -70,12 +68,6 @@ PixelSampler::PixelSampler(int64_t samplesPerPixel,
 		samples1D.push_back(std::vector<Float>(samplesPerPixel));
 		samples2D.push_back(std::vector<Point2f>(samplesPerPixel));
 	}
-}
-
-std::unique_ptr<Sampler> PixelSampler::Clone(int seed)
-{
-	// TODO:
-	return std::unique_ptr<Sampler>();
 }
 
 bool PixelSampler::StartNextSample()
@@ -96,6 +88,14 @@ Float PixelSampler::Get1D()
 		return samples1D[current1DDimension++][currentPixelSampleIndex];
 	else
 		return rng.UniformFloat();
+}
+
+Point2f PixelSampler::Get2D()
+{
+	if (current2DDimension < samples2D.size())
+		return samples2D[current2DDimension++][currentPixelSampleIndex];
+	else
+		return Point2f(rng.UniformFloat(), rng.UniformFloat());
 }
 
 void GlobalSampler::StartPixel(const Point2i& p) {
