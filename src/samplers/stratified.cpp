@@ -1,5 +1,6 @@
 #include "samplers/stratified.h"
 
+
 StratifiedSampler::StratifiedSampler(int xPixelSamples,
 	int yPixelSamples,
 	bool jitterSamples, 
@@ -11,6 +12,7 @@ StratifiedSampler::StratifiedSampler(int xPixelSamples,
 
 void StratifiedSampler::StartPixel(const Point2i& p)
 {
+	// Generate single stratified samples for the pixel
 	for (size_t i = 0; i < samples1D.size(); ++i)
 	{
 		StratifiedSample1D(&samples1D[i][0], xPixelSamples * yPixelSamples,
@@ -48,3 +50,4 @@ void StratifiedSampler::StartPixel(const Point2i& p)
 
 	PixelSampler::StartPixel(p);
 }
+
