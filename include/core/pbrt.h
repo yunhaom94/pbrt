@@ -2,6 +2,8 @@
 #pragma once
 #define _USE_MATH_DEFINES
 #define PBRT_IS_WINDOWS
+#define PBRT_FLOAT_AS_DOUBLE
+#define PBRT_NOINLINE
 
 #ifndef PBRT_L1_CACHE_LINE_SIZE
 #define PBRT_L1_CACHE_LINE_SIZE 64
@@ -219,10 +221,3 @@ static constexpr Float MaxFloat = std::numeric_limits<Float>::max();
 static constexpr Float Infinity = std::numeric_limits<Float>::infinity();
 #define MachineEpsilon (std::numeric_limits<Float>::epsilon() * 0.5)
 
-
-
-//#ifdef PBRT_FLOAT_IS_DOUBLE
-static const Float OneMinusEpsilon = 0x1.fffffffffffffp-1;
-//#else
-//static const Float OneMinusEpsilon = 0x1.fffffep-1;
-//#endif

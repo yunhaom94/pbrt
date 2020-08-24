@@ -1,5 +1,5 @@
 #include "core/sampling.h"
-#include "core/rng.h"
+#include "utlis/rng.h"
 #include "utlis/utlis.h"
 
 
@@ -170,4 +170,54 @@ Vector3f UniformSampleSphere(const Point2f& u)
 Float UniformSpherePdf()
 {
 	return Inv4Pi;
+}
+
+
+void StratifiedSample1D(Float* samp, int nSamples, RNG& rng,
+	bool jitter)
+{
+	Float invNSamples = (Float)1 / nSamples;
+	for (int i = 0; i < nSamples; ++i)
+	{
+		Float delta = jitter ? rng.UniformFloat() : 0.5;
+		samp[i] = std::min((i + delta) * invNSamples, OneMinusEpsilon);
+	}
+}
+
+void StratifiedSample2D(Point2f* samp, int nx, int ny, RNG& rng,
+	bool jitter)
+{
+	Float dx = (Float)1 / nx, dy = (Float)1 / ny;
+	for (int y = 0; y < ny; ++y)
+		for (int x = 0; x < nx; ++x)
+		{
+			Float jx = jitter ? rng.UniformFloat() : 0.5f;
+			Float jy = jitter ? rng.UniformFloat() : 0.5f;
+			samp->x() = std::min((x + jx) * dx, OneMinusEpsilon);
+			samp->y() = std::min((y + jy) * dy, OneMinusEpsilon);
+			++samp;
+		}
+}
+
+// Latin hypercube sampling
+void LatinHypercube(Float* samples, int nSamples, int nDim, RNG& rng)
+{
+	Float invNSamples = (Float)1 / nSamples;
+	for (int i = 0; i < nSamples; ++i)
+	{
+		for (int j = 0; j < nDim; ++j)
+		{
+			Float sj = (i + (rng.UniformFloat())) * invNSamples;
+			samples[nDim * i + j] = std::min(sj, OneMinusEpsilon);
+		}
+	}
+
+	for (int i = 0; i < nDim; ++i)
+	{
+		for (int j = 0; j < nSamples; ++j)
+		{
+			int other = j + rng.UniformUInt32(nSamples - j);
+			std::swap(samples[nDim * j + i], samples[nDim * other + i]);
+		}
+	}
 }

@@ -1,7 +1,9 @@
 #pragma once
 #include "core/pbrt.h"
 #include "core/camera.h"
-#include "core/rng.h"
+#include "core/sampling.h"
+#include "utlis/rng.h"
+
 
 
 class Sampler
@@ -130,20 +132,3 @@ public:
 };
 
 
-// helper functions
-void StratifiedSample1D(Float* samp, int nSamples, RNG& rng, bool jitter);
-
-void StratifiedSample2D(Point2f* samp, int nx, int ny, RNG& rng, bool jitter);
-
-template <typename T>
-inline void Shuffle(T* samp, int count, int nDimensions, RNG& rng) 
-{
-	for (int i = 0; i < count; ++i) {
-		int other = i + rng.UniformUInt32(count - i);
-		for (int j = 0; j < nDimensions; ++j)
-			std::swap(samp[nDimensions * i + j],
-				samp[nDimensions * other + j]);
-	}
-}
-
-void LatinHypercube(Float* samples, int nSamples, int nDim, RNG& rng);
