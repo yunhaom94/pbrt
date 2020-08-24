@@ -49,6 +49,7 @@ Point2f UniformSampleDisk(const Point2f& u);
 
 Point2f ConcentricSampleDisk(const Point2f& u);
 
+// TODO: move some of the stuffs to .cpp
 inline Vector3f CosineSampleHemisphere(const Point2f& u)
 {
 	Point2f d = ConcentricSampleDisk(u);
