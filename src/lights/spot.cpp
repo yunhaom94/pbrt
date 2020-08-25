@@ -17,7 +17,7 @@ Spectrum SpotLight::Sample_Li(const Interaction& ref,
 	*pdf = 1.0;
 	*vis = VisibilityTester(ref, Interaction(pLight, ref.time,
 		mediumInterface));
-	return I * Falloff(-*wi) / (pLight, ref.p).squaredNorm();
+	return I * Falloff(-*wi) / (pLight - ref.p).squaredNorm();
 }
 
 Float SpotLight::Falloff(const Vector3f& w) const 

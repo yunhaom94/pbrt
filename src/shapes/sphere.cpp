@@ -262,12 +262,12 @@ Interaction Sphere::Sample(const Interaction& ref,
 	// Sample uniformly on sphere if p is inside it
 	Point3f pOrigin = OffsetRayOrigin(ref.p, ref.pError, ref.n,
 		pCenter - ref.p);
-	if ((pOrigin, pCenter).squaredNorm() <= radius * radius)
+	if ((pOrigin - pCenter).squaredNorm() <= radius * radius)
 		return Sample(u);
 
 	// Sample sphere uniformly inside subtended cone
 
-	Float sinThetaMax2 = radius * radius / (ref.p, pCenter).squaredNorm();
+	Float sinThetaMax2 = radius * radius / (ref.p - pCenter).squaredNorm();
 	Float cosThetaMax = std::sqrt(std::max((Float)0, 1 - sinThetaMax2));
 	Float cosTheta = (1 - u[0]) + u[0] * cosThetaMax;
 	Float sinTheta = std::sqrt(std::max((Float)0, 1 - cosTheta * cosTheta));
@@ -302,10 +302,10 @@ Float Sphere::Pdf(const Interaction& ref, const Vector3f& wi) const
 	Point3f pOrigin = OffsetRayOrigin(ref.p, ref.pError, ref.n,
 		pCenter - ref.p);
 
-	if ((pOrigin, pCenter).squaredNorm() <= radius * radius)
+	if ((pOrigin - pCenter).squaredNorm() <= radius * radius)
 		return Shape::Pdf(ref, wi);
 
-	Float sinThetaMax2 = radius * radius / (ref.p, pCenter).squaredNorm();
+	Float sinThetaMax2 = radius * radius / (ref.p - pCenter).squaredNorm();
 	Float cosThetaMax = std::sqrt(std::max((Float)0, 1 - sinThetaMax2));
 	return UniformConePdf(cosThetaMax);
 }

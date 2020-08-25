@@ -42,7 +42,7 @@ Float Shape::Pdf(const Interaction& ref, const Vector3f& wi) const
 	if (!Intersect(ray, &tHit, &isectLight, false)) 
 		return 0;
 
-	Float pdf = (ref.p, isectLight.p).squaredNorm() /
+	Float pdf = (ref.p - isectLight.p).squaredNorm() /
 		(std::abs(isectLight.n.dot(-wi)) * Area());
 
 	return pdf;
