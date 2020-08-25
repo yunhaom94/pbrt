@@ -12,7 +12,6 @@ Spectrum WhittedIntegrator::Li(const RayDifferential& ray,
 	const Scene& scene, Sampler& sampler, MemoryArena& arena,
 	int depth) const 
 {
-
 	// the total result light
 	Spectrum L(0.0);
 
@@ -20,7 +19,7 @@ Spectrum WhittedIntegrator::Li(const RayDifferential& ray,
 	SurfaceInteraction isect;
 	if (!scene.Intersect(ray, &isect)) 
 	{
-		// if no hit, just get lights from light source
+		// if no hit, get light from directional light
 		for (const auto& light : scene.lights)
 			L += light->Le(ray);
 		return L;
@@ -58,10 +57,12 @@ Spectrum WhittedIntegrator::Li(const RayDifferential& ray,
 		if (Li.IsBlack() || pdf == 0) 
 			continue;
 		
-		// do bsdf then multiply by consine (with dot product)
-		// to get actual color
+		// use bsdf to calculate the fraction of light reflected at that point 
+		// then multiply by consine (with dot product) to get actual color.
 		// if light ray is blocked by some object, then skip (for shadow)
 		Spectrum f = isect.bsdf->f(wo, wi);
+
+		// does not care about indirect light
 		if (!f.IsBlack() && visibility.Unoccluded(scene))
 			L += f * Li * std::abs(wi.dot(n)) * (1.0 / pdf);
 	}

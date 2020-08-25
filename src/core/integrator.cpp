@@ -150,6 +150,7 @@ Spectrum EstimateDirect(const Interaction& it,
     return Ld;
 }
 
+
 void SamplerIntegrator::Render(const Scene& scene)
 {
     Preprocess(scene, *sampler);
@@ -181,10 +182,8 @@ void SamplerIntegrator::Render(const Scene& scene)
         // a small buffer of memory to store pixel values for the current tile.
         std::unique_ptr<FilmTile> filmTile = camera->film->GetFilmTile(tileBounds);
 
-        //TODO: implement iterator for bounding boxes p76 and p30
         // loop through each pixel in the tile
-        //for (Point2i pixel : tileBounds) 
-        for (Point2i pixel(0, 0);;)
+        for (Point2i pixel : tileBounds) 
         {
             tileSampler->StartPixel(pixel);
             do {

@@ -36,6 +36,9 @@ public:
 
 	// returns the radiance arriving at the given point of interaction
 	// VisibilityTester used to holds info on shadow ray
+	// For area light:
+	// u is the point on the surface of light
+	// pdf output parameter stores the probability density for the light sample that was taken
 	virtual Spectrum Sample_Li(const Interaction& ref, const Point2f& u,
 		Vector3f* wi, Float* pdf, VisibilityTester* vis) const = 0;
 

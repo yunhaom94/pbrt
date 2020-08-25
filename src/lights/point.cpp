@@ -11,10 +11,10 @@ Spectrum PointLight::Sample_Li(const Interaction& ref,
 	VisibilityTester* vis) const
 {
 	*wi = (pLight - ref.p).normalized();
-	*pdf = 1.f;
+	*pdf = 1.0;
 	*vis = VisibilityTester(ref, Interaction(pLight, ref.time,
 		mediumInterface));
-	return I / (pLight, ref.p).squaredNorm();
+	return I / (pLight - ref.p).squaredNorm();
 }
 
 Spectrum PointLight::Power() const 

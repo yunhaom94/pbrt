@@ -32,16 +32,28 @@ public:
 
 	~SamplerIntegrator() {}
 
-	// waiting to be implemented
+	// do pre-computation on the scene after scene is initialized
 	virtual void Preprocess(const Scene& scene, Sampler& sampler) { }
 
-	// actually calculate light stuff along the ray,
-	// similar to RayColour() in 418 hw
-	// return the spectrograph of a ray of light
+	/*
+	* Rendering Loop:
+	* 1. The Sampler provides a sequence of sample values, one for each image sample to be taken.
+	* 2. The Camera turns a sample into a corresponding ray from the film plane
+	* 3. Li() method implementation computes the radiance along that ray arriving at the film.
+	*    (Li() == RayColor())
+	* 4. The sample and its radiance are given to the Film, which stores their contribution in an image
+	*/
+	void Render(const Scene& scene);
+
+	/* Get radiance of the camera ray, similar to Ray_Colour()
+	* How it works:
+	* 1. Use ray to intersect scene to get a surface interaction
+	* 2. Compute material properties at interaction point in a BSDF
+	* 3. Uses the light to determine the illumination
+	* 4. Uses above to calculate the final radiance back to camera along the ray
+	*/
 	virtual Spectrum Li(const RayDifferential& ray, const Scene& scene,
 		Sampler& sampler, MemoryArena& arena, int depth = 0) const = 0;
-
-	void Render(const Scene& scene);
 
 	Spectrum SpecularReflect(
 		const RayDifferential& ray, const SurfaceInteraction& isect,

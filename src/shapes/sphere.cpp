@@ -72,7 +72,7 @@ bool Sphere::Intersect(const Ray& r, Float* tHit,
 	Float phi;
 	Point3f pHit = ray((Float)tShapeHit);
 
-	// TODO: Refine sphere intersection point 225
+	// Refine sphere intersection point 225
 	// finding hit point on the sphere coordinate
 	if (pHit.x() == 0 && pHit.y() == 0)
 		pHit.x() = 1e-5f * radius;
@@ -94,7 +94,7 @@ bool Sphere::Intersect(const Ray& r, Float* tHit,
 		tShapeHit = t1;
 		pHit = ray((Float)tShapeHit);
 
-		// TODO: Refine sphere intersection point 225
+		// Refine sphere intersection point 225
 		// finding hit point on the sphere coordinate
 		if (pHit.x() == 0 && pHit.y() == 0)
 			pHit.x() = 1e-5f * radius;
@@ -118,8 +118,7 @@ bool Sphere::Intersect(const Ray& r, Float* tHit,
 	Float sinPhi = pHit.y() * invZRadius;
 	Vector3f dpdu(-phiMax * pHit.y(), phiMax * pHit.x(), 0);
 	Vector3f dpdv = (thetaMax - thetaMin) *
-		Vector3f(pHit.z() * cosPhi, pHit.z() * sinPhi,
-			-radius * std::sin(theta));
+		Vector3f(pHit.z() * cosPhi, pHit.z() * sinPhi, -radius * std::sin(theta));
 
 	Vector3f d2Pduu = -phiMax * phiMax * Vector3f(pHit.x(), pHit.y(), 0);
 	Vector3f d2Pduv = (thetaMax - thetaMin) * pHit.z() * phiMax *
