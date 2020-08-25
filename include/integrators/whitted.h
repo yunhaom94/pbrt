@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/pbrt.h"
-#include "integrators/sampler_integrator.h"
+#include "core/integrator.h"
 
 // a simple integrator without direct lighting
 class WhittedIntegrator : public SamplerIntegrator

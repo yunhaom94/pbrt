@@ -1,5 +1,5 @@
 #pragma once
-#include "integrators/sampler_integrator.h"
+#include "core/integrator.h"
 
 enum class LightStrategy { UniformSampleAll, UniformSampleOne };
 

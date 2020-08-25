@@ -1,6 +1,6 @@
 #pragma once
 
-#include "integrators/sampler_integrator.h"
+#include "core/integrator.h"
 
 // integrator that does path tracing
 class PathIntegrator : public SamplerIntegrator 
