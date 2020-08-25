@@ -1,4 +1,6 @@
 #include "core/scene.h"
+#include "core/primitive.h"
+#include "core/light.h"
 #include "core/ray.h"
 #include "core/medium.h"
 

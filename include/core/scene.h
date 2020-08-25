@@ -5,9 +5,6 @@
 #include "core/primitive.h"
 #include "core/light.h"
 
-
-
-
 class Scene
 {
 
@@ -16,8 +13,7 @@ public:
 	std::vector<std::shared_ptr<Light>> lights;
 
 private:
-	// kinda like the "top level" of a tree toward all geometries in 
-	// the scene
+	// Top level BVH
 	std::shared_ptr<Primitive> aggregate;
 	Bounds3f worldBound;
 
