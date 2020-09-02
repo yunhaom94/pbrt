@@ -271,6 +271,7 @@ Union(const Bounds3<T>& b1, const Bounds3<T>& b2)
 											 std::max(b1.pMax.z(), b2.pMax.z())));
 }
 
+// get a new box where b1 and b2 overlap
 template <typename T>
 Bounds2<T> Intersect(const Bounds2<T>& b1, const Bounds2<T>& b2) {
 	// Important: assign to pMin/pMax directly and don't run the Bounds2()
@@ -278,21 +279,18 @@ Bounds2<T> Intersect(const Bounds2<T>& b1, const Bounds2<T>& b2) {
 	// turn, that breaks returning an invalid bound for the case where we
 	// intersect non-overlapping bounds (as we'd like to happen).
 	Bounds2<T> ret;
-	// TODO:
+	ret.pMin = Max(b1.pMin, b2.pMin);
+	ret.pMax = Min(b1.pMax, b2.pMax);
 	return ret;
 }
-
 
 template <typename T> Bounds3<T>
 Intersect(const Bounds3<T>& b1, const Bounds3<T>& b2)
 {
-	// TODO:
-	return Bounds3<T>(Eigen::Matrix<T, 3, 1>(std::max(b1.pMin.x(), b2.pMin.x()),
-											 std::max(b1.pMin.y(), b2.pMin.y()),
-											 std::max(b1.pMin.z(), b2.pMin.z())),
-					  Eigen::Matrix<T, 3, 1>(std::min(b1.pMax.x(), b2.pMax.x()),
-											 std::min(b1.pMax.y(), b2.pMax.y()),
-											 std::min(b1.pMax.z(), b2.pMax.z())));
+	Bounds3<T> ret;
+	ret.pMin = Max(b1.pMin, b2.pMin);
+	ret.pMax = Min(b1.pMax, b2.pMax);
+	return ret;
 }
 
 // TODO: maybe can simplify with Eigen

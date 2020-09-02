@@ -42,7 +42,8 @@ public:
 	virtual void StartPixel(const Point2i& p);
 
 	// compute next sample, return false if more
-	// sample then samples per pixel
+	// sample then samples per pixel (no more sample
+	// is needed for this pixel)
 	virtual bool StartNextSample();
 
 	// returns the sample value for next 

@@ -11,15 +11,18 @@ Film::Film(const Point2i& resolution, const Bounds2f& cropWindow,
 {
 	croppedPixelBounds =
 		Bounds2i(Point2i(std::ceil(fullResolution.x() * cropWindow.pMin.x()),
-			std::ceil(fullResolution.y() * cropWindow.pMin.y())),
-			Point2i(std::ceil(fullResolution.x() * cropWindow.pMax.x()),
-				std::ceil(fullResolution.y() * cropWindow.pMax.y())));
+						 std::ceil(fullResolution.y() * cropWindow.pMin.y())),
+				 Point2i(std::ceil(fullResolution.x() * cropWindow.pMax.x()),
+						 std::ceil(fullResolution.y() * cropWindow.pMax.y())));
 
 	pixels = std::unique_ptr<Pixel[]>(new Pixel[croppedPixelBounds.Area()]);
 
+	// Precompute filter weight table
 	int offset = 0;
-	for (int y = 0; y < filterTableWidth; ++y) {
-		for (int x = 0; x < filterTableWidth; ++x, ++offset) {
+	for (int y = 0; y < filterTableWidth; ++y) 
+	{
+		for (int x = 0; x < filterTableWidth; ++x, ++offset) 
+		{
 			Point2f p;
 			p.x() = (x + 0.5f) * filter->radius.x() / filterTableWidth;
 			p.y() = (y + 0.5f) * filter->radius.y() / filterTableWidth;
@@ -30,11 +33,11 @@ Film::Film(const Point2i& resolution, const Bounds2f& cropWindow,
 
 Bounds2i Film::GetSampleBounds() const 
 {
-	Point2f a = Point2f(croppedPixelBounds.pMin) + Point2f(0.5, 0.5) - (Point2f)filter->radius;
+	Point2f min = Point2f(croppedPixelBounds.pMin) + Point2f(0.5, 0.5) - (Point2f)filter->radius;
 
-	Point2f b = Point2f(croppedPixelBounds.pMax) - Point2f(0.5, 0.5) + (Point2f)filter->radius;
+	Point2f max = Point2f(croppedPixelBounds.pMax) - Point2f(0.5, 0.5) + (Point2f)filter->radius;
 
-	Bounds2f floatBounds(Floor(a), Ceil(b));
+	Bounds2f floatBounds(Floor(min), Ceil(max));
 
 	return (Bounds2i)floatBounds;
 }
@@ -47,24 +50,22 @@ Bounds2f Film::GetPhysicalExtent() const
 	return Bounds2f(Point2f(-x / 2, -y / 2), Point2f(x / 2, y / 2));
 }
 
-std::unique_ptr<FilmTile> Film::GetFilmTile(
-	const Bounds2i& sampleBounds)
+std::unique_ptr<FilmTile> Film::GetFilmTile(const Bounds2i& sampleBounds)
 {
 	Vector2f halfPixel = Vector2f(0.5f, 0.5f);
 	Bounds2f floatBounds = (Bounds2f)sampleBounds;
+	
+	Point2f min = floatBounds.pMin - halfPixel - filter->radius;
+	Point2f max = floatBounds.pMax - halfPixel + filter->radius;
 
-	Point2i p0 = (Point2i)Ceil(Point2f(floatBounds.pMin - 
-		(Point2f)halfPixel - 
-		(Point2f)filter->radius));
-
-	Point2i p1 = (Point2i)Floor(Point2f(floatBounds.pMax -
-		(Point2f)halfPixel + 
-		(Point2f)filter->radius)) + Point2i(1, 1);
-
+	Point2i p0 = (Point2i)Ceil(min);
+	Point2i p1 = (Point2i)Floor(max) + Point2i(1, 1);
+	
 	Bounds2i tilePixelBounds = Intersect(Bounds2i(p0, p1), croppedPixelBounds);
-
-	return std::unique_ptr<FilmTile>(new FilmTile(tilePixelBounds,
-			filter->radius, filterTable, filterTableWidth));
+	
+	return std::unique_ptr<FilmTile>(
+		new FilmTile(
+			tilePixelBounds, filter->radius, filterTable, filterTableWidth));
 }
 
 
@@ -105,7 +106,8 @@ void FilmTile::AddSample(const Point2f& pFilm, const Spectrum& L, Float sampleWe
 void Film::MergeFilmTile(std::unique_ptr<FilmTile> tile) 
 {
 	std::lock_guard<std::mutex> lock(mutex);
-	for (Point2i pixel : tile->GetPixelBounds()) {
+	for (Point2i pixel : tile->GetPixelBounds()) 
+	{
 		const FilmTilePixel& tilePixel = tile->GetPixel(pixel);
 		Pixel& mergePixel = GetPixel(pixel);
 		Float xyz[3];
@@ -116,7 +118,8 @@ void Film::MergeFilmTile(std::unique_ptr<FilmTile> tile)
 	}
 }
 
-void Film::SetImage(const Spectrum* img) const {
+void Film::SetImage(const Spectrum* img) const 
+{
 	int nPixels = croppedPixelBounds.Area();
 	for (int i = 0; i < nPixels; ++i) {
 		Pixel& p = pixels[i];
@@ -126,7 +129,8 @@ void Film::SetImage(const Spectrum* img) const {
 	}
 }
 
-void Film::AddSplat(const Point2f& p, const Spectrum& v) {
+void Film::AddSplat(const Point2f& p, const Spectrum& v)
+{
 	if (!InsideExclusive((Point2i)p, croppedPixelBounds))
 		return;
 	Float xyz[3];
@@ -142,10 +146,14 @@ void Film::WriteImage(Float splatScale)
 	int offset = 0;
 	for (Point2i p : croppedPixelBounds) 
 	{
+		// Convert pixel XYZ color to RGB
 		Pixel& pixel = GetPixel(p);
 		XYZToRGB(pixel.xyz, &rgb[3 * offset]);
+		
+		// Normalize pixel with weight sum
 		Float filterWeightSum = pixel.filterWeightSum;
-		if (filterWeightSum != 0) {
+		if (filterWeightSum != 0)
+		{
 			Float invWt = (Float)1 / filterWeightSum;
 			rgb[3 * offset] = std::max((Float)0, rgb[3 * offset] * invWt);
 			rgb[3 * offset + 1] = std::max((Float)0, rgb[3 * offset + 1] * invWt);
